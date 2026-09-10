@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Закарпатська Міні-Ферма</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --accent: #ff8f00;
+            --bg-dark: #121f15;
+            --card-bg: #1e3322;
+            --text-main: #fff8e1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--bg-dark), #0a140d);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            position: relative;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 20px;
+            margin: 0;
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #a5d6a7;
+        }
+
+        .music-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid #ffcc00;
+            color: #ffcc00;
+            padding: 5px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .status-panel {
+            background: var(--card-bg);
+            border: 2px solid #ffcc00;
+            border-radius: 15px;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 15px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-sizing: border-box;
+        }
+
+        #score {
+            font-size: 30px;
+            font-weight: bold;
+            color: #ffcc00;
+            margin: 2px 0;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            font-size: 11px;
+            color: #a5d6a7;
+            margin-top: 5px;
+            border-top: 1px solid #2d4a35;
+            padding-top: 5px;
+        }
+
+        .clicker-btn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #7cb342, #33691e);
+            border: 5px solid #fff8e1;
+            box-shadow: 0 8px 25px rgba(51, 105, 30, 0.6);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.08s, box-shadow 0.08s;
+            margin: 5px 0 15px 0;
+        }
+
+        .clicker-btn:active {
+            transform: scale(0.90);
+            box-shadow: 0 3px 10px rgba(51, 105, 30, 0.4);
+        }
+
+        .clicker-icon {
+            font-size: 50px;
+        }
+
+        .clicker-text {
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        .tabs {
+            display: flex;
+            width: 100%;
+            margin-bottom: 10px;
+            background: #152619;
+            border-radius: 10px;
+            padding: 3px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #a5d6a7;
+            padding: 7px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #2d4a35;
+            color: #ffcc00;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            max-height: 230px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upgrade-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #388e3c;
+        }
+
+        .upgrade-info h3 {
+            margin: 0 0 2px 0;
+            font-size: 12px;
+        }
+
+        .upgrade-info p {
+            margin: 0;
+            font-size: 10px;
+            color: #a5d6a7;
+        }
+
+        .buy-btn {
+            background: #ffcc00;
+            color: #121f15;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .buy-btn:hover {
+            background: #ffea00;
+        }
+
+        .buy-btn:disabled {
+            background: #444;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        .floating-score {
+            position: absolute;
+            font-weight: bold;
+            color: #ffcc00;
+            font-size: 16px;
+            animation: floatUp 0.7s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-45px); }
+        }
+
+        #event-banner {
+            background: #d84315;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            text-align: center;
+            margin-bottom: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Підключення фонової музики -->
+    <audio id="bgMusic" loop>
+        <source src="music.mp3.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="container">
+        <header>
+            <button class="music-toggle" id="musicBtn" onclick="toggleMusic()">🎵 Музика: Викл</button>
+            <h1>🏡 Закарпатська Ферма</h1>
+            <div class="subtitle">Вирощуй та збирай смаколик!</div>
+        </header>
+
+        <div id="event-banner">⚡ Погожий день! Подвійний врожай!</div>
+
+        <div class="status-panel">
+            <div style="font-size: 10px; color: #a5d6a7;">Зібрано врожаю:</div>
+            <div id="score">0</div>
+            <div class="stats-row">
+                <span id="cps">Врожай/сек: 0</span>
+                <span id="level-display">Господар: 1</span>
+            </div>
+        </div>
+
+        <div class="clicker-btn" id="clickBtn">
+            <span class="clicker-icon">🥔</span>
+            <span class="clicker-text">Збирати!</span>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('upgrades', event)">Інструменти</button>
+            <button class="tab-btn" onclick="switchTab('business', event)">Ферма</button>
+            <button class="tab-btn" onclick="switchTab('achievements', event)">Нагороди</button>
+        </div>
+
+        <div id="tab-upgrades" class="tab-content active">
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>⛏️ Дерев'яна сапка</h3>
+                    <p>+1 за клік | Ціна: <span id="c1-cost">15</span></p>
+                </div>
+                <button class="buy-btn" id="buyC1" onclick="buyClickUp()">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🚜 Маленький мотоблок</h3>
+                    <p>+5 за клік | Ціна: <span id="c2-cost">100</span></p>
+                </div>
+                <button class="buy-btn" id="buyC2" onclick="buyClickUp2()">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>✨ Чарівне добриво</h3>
+                    <p>+25 за клік | Ціна: <span id="c3-cost">550</span></p>
+                </div>
+                <button class="buy-btn" id="buyC3" onclick="buyClickUp3()">Купити</button>
+            </div>
+        </div>
+
+        <div id="tab-business" class="tab-content">
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🐔 Курятник</h3>
+                    <p>+1/сек | <span id="b1-count">0</span> шт. | Ціна: <span id="b1-cost">50</span></p>
+                </div>
+                <button class="buy-btn" id="buyB1" onclick="buyBusiness(1)">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🐑 Овчарня з овечками</h3>
+                    <p>+8/сек | <span id="b2-count">0</span> шт. | Ціна: <span id="b2-cost">300</span></p>
+                </div>
+                <button class="buy-btn" id="buyB2" onclick="buyBusiness(2)">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🏡 Велика полонина</h3>
+                    <p>+35/сек | <span id="b3-count">0</span> шт. | Ціна: <span id="b3-cost">1400</span></p>
+                </div>
+                <button class="buy-btn" id="buyB3" onclick="buyBusiness(3)">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🚜 Агрокомплекс Карпати</h3>
+                    <p>+150/сек | <span id="b4-count">0</span> шт. | Ціна: <span id="b4-cost">7000</span></p>
+                </div>
+                <button class="buy-btn" id="buyB4" onclick="buyBusiness(4)">Купити</button>
+            </div>
+        </div>
+
+        <div id="tab-achievements" class="tab-content">
+            <div class="upgrade-card" style="opacity: 0.6;" id="ach-1">
+                <div class="upgrade-info">
+                    <h3>🌱 Перша грядка</h3>
+                    <p>Зберіть 100 врожаю</p>
+                </div>
+            </div>
+            <div class="upgrade-card" style="opacity: 0.6;" id="ach-2">
+                <div class="upgrade-info">
+                    <h3>🧑‍🌾 Успішний ґазда</h3>
+                    <p>Досягніть 10 врожаю/сек</p>
+                </div>
+            </div>
+            <div class="upgrade-card" style="opacity: 0.6;" id="ach-3">
+                <div class="upgrade-info">
+                    <h3>👑 Король полонини</h3>
+                    <p>Зберіть 10,000 врожаю</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let clickPower = 1;
+        let cps = 0;
+        let level = 1;
+        let eventMultiplier = 1;
+
+        let c1Cost = 15, c2Cost = 100, c3Cost = 550;
+        let bus = [
+            { count: 0, cost: 50, cps: 1, costMult: 1.4 },
+            { count: 0, cost: 300, cps: 8, costMult: 1.45 },
+            { count: 0, cost: 1400, cps: 35, costMult: 1.5 },
+            { count: 0, cost: 7000, cps: 150, costMult: 1.55 }
+        ];
+
+        const scoreEl = document.getElementById('score');
+        const cpsEl = document.getElementById('cps');
+        const levelEl = document.getElementById('level-display');
+        const clickBtn = document.getElementById('clickBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+
+        let isMusicPlaying = false;
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicBtn.innerText = "🎵 Музика: Викл";
+                isMusicPlaying = false;
+            } else {
+                bgMusic.play().then(() => {
+                    musicBtn.innerText = "🎵 Музика: Вкл";
+                    isMusicPlaying = true;
+                }).catch(e => console.log("Потрібна дія користувача"));
+            }
+        }
+
+        function switchTab(tabName, evt) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            if (evt) evt.target.classList.add('active');
+        }
+
+        clickBtn.addEventListener('click', (e) => {
+            let earned = clickPower * eventMultiplier;
+            score += earned;
+            checkAchievements();
+            updateUI();
+            
+            const rect = clickBtn.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const floatText = document.createElement('div');
+            floatText.className = 'floating-score';
+            floatText.innerText = `+${earned}`;
+            floatText.style.left = `${x}px`;
+            floatText.style.top = `${y}px`;
+            clickBtn.appendChild(floatText);
+
+            setTimeout(() => floatText.remove(), 700);
+        });
+
+        function buyClickUp() {
+            if (score >= c1Cost) {
+                score -= c1Cost;
+                clickPower += 1;
+                c1Cost = Math.floor(c1Cost * 1.5);
+                document.getElementById('c1-cost').innerText = c1Cost;
+                updateUI();
+            }
+        }
+        function buyClickUp2() {
+            if (score >= c2Cost) {
+                score -= c2Cost;
+                clickPower += 5;
+                c2Cost = Math.floor(c2Cost * 1.55);
+                document.getElementById('c2-cost').innerText = c2Cost;
+                updateUI();
+            }
+        }
+        function buyClickUp3() {
+            if (score >= c3Cost) {
+                score -= c3Cost;
+                clickPower += 25;
+                c3Cost = Math.floor(c3Cost * 1.6);
+                document.getElementById('c3-cost').innerText = c3Cost;
+                updateUI();
+            }
+        }
+
+        function buyBusiness(id) {
+            let index = id - 1;
+            let b = bus[index];
+            if (score >= b.cost) {
+                score -= b.cost;
+                b.count++;
+                cps += b.cps;
+                b.cost = Math.floor(b.cost * b.costMult);
+                
+                document.getElementById(`b${id}-count`).innerText = b.count;
+                document.getElementById(`b${id}-cost`).innerText = b.cost;
+                updateUI();
+            }
+        }
+
+        function updateLevel() {
+            if (score >= 10000) level = 4;
+            else if (score >= 2500) level = 3;
+            else if (score >= 500) level = 2;
+            else level = 1;
+            
+            let titles = ["1: Новачок", "2: Ґазда", "3: Полонинець", "4: Магнат"];
+            levelEl.innerText = `Господар: ${titles[level-1]}`;
+        }
+
+        function checkAchievements() {
+            if (score >= 100) document.getElementById('ach-1').style.opacity = '1';
+            if (cps >= 10) document.getElementById('ach-2').style.opacity = '1';
+            if (score >= 10000) document.getElementById('ach-3').style.opacity = '1';
+        }
+
+        setInterval(() => {
+            if (Math.random() < 0.2 && eventMultiplier === 1) {
+                eventMultiplier = 2;
+                let banner = document.getElementById('event-banner');
+                banner.style.display = 'block';
+                setTimeout(() => {
+                    eventMultiplier = 1;
+                    banner.style.display = 'none';
+                }, 10000);
+            }
+        }, 25000);
+
+        setInterval(() => {
+            if (cps > 0) {
+                score += cps;
+                checkAchievements();
+                updateUI();
+            }
+        }, 1000);
+
+        function updateUI() {
+            scoreEl.innerText = Math.floor(score);
+            cpsEl.innerText = `Врожай/сек: ${cps * eventMultiplier}`;
+            updateLevel();
+
+            document.getElementById('buyC1').disabled = score < c1Cost;
+            document.getElementById('buyC2').disabled = score < c2Cost;
+            document.getElementById('buyC3').disabled = score < c3Cost;
+
+            for (let i = 0; i < bus.length; i++) {
+                let btn = document.getElementById(`buyB${i+1}`);
+                if (btn) btn.disabled = score < bus[i].cost;
+            }
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
