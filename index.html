@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Закарпатський Клікер</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --accent: #ff8f00;
+            --bg-dark: #121f15;
+            --card-bg: #1e3322;
+            --text-main: #fff8e1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--bg-dark), #0a140d);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 0;
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #a5d6a7;
+        }
+
+        /* Статус бари */
+        .status-panel {
+            background: var(--card-bg);
+            border: 2px solid #ffcc00;
+            border-radius: 15px;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 15px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-sizing: border-box;
+        }
+
+        #score {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffcc00;
+            margin: 2px 0;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            font-size: 12px;
+            color: #a5d6a7;
+            margin-top: 5px;
+            border-top: 1px solid #2d4a35;
+            padding-top: 5px;
+        }
+
+        /* Велика кнопка клікера */
+        .clicker-btn {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffb300, #e65100);
+            border: 5px solid #fff8e1;
+            box-shadow: 0 8px 25px rgba(230, 81, 0, 0.6);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.08s, box-shadow 0.08s;
+            margin: 10px 0 15px 0;
+        }
+
+        .clicker-btn:active {
+            transform: scale(0.90);
+            box-shadow: 0 3px 10px rgba(230, 81, 0, 0.4);
+        }
+
+        .clicker-icon {
+            font-size: 55px;
+        }
+
+        .clicker-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Вкладки */
+        .tabs {
+            display: flex;
+            width: 100%;
+            margin-bottom: 10px;
+            background: #152619;
+            border-radius: 10px;
+            padding: 3px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #a5d6a7;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #2d4a35;
+            color: #ffcc00;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Картки покращень */
+        .upgrade-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #388e3c;
+        }
+
+        .upgrade-info h3 {
+            margin: 0 0 2px 0;
+            font-size: 13px;
+        }
+
+        .upgrade-info p {
+            margin: 0;
+            font-size: 11px;
+            color: #a5d6a7;
+        }
+
+        .buy-btn {
+            background: #ffcc00;
+            color: #121f15;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .buy-btn:hover {
+            background: #ffea00;
+        }
+
+        .buy-btn:disabled {
+            background: #444;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        /* Анімація кліків */
+        .floating-score {
+            position: absolute;
+            font-weight: bold;
+            color: #ffcc00;
+            font-size: 18px;
+            animation: floatUp 0.7s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-45px); }
+        }
+
+        /* Сповіщення про події */
+        #event-banner {
+            background: #d84315;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 10px;
+            display: none;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>⛰️ Закарпатський Клікер</h1>
+            <div class="subtitle">Від полонини до світового успіху!</div>
+        </header>
+
+        <!-- Бахкалка/Повідомлення про події -->
+        <div id="event-banner">⚡ Туристи приїхали! Подвійний дохід на 10 секунд!</div>
+
+        <div class="status-panel">
+            <div style="font-size: 11px; color: #a5d6a7;">Бали (Флуори):</div>
+            <div id="score">0</div>
+            <div class="stats-row">
+                <span id="cps">Дохід/сек: 0</span>
+                <span id="level-display">Рівень: 1</span>
+            </div>
+        </div>
+
+        <!-- Кнопка кліку -->
+        <div class="clicker-btn" id="clickBtn">
+            <span class="clicker-icon" id="main-icon">🫕</span>
+            <span class="clicker-text">Готувати!</span>
+        </div>
+
+        <!-- Меню вкладки -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('upgrades')">Покращення</button>
+            <button class="tab-btn" onclick="switchTab('business')">Бізнес</button>
+            <button class="tab-btn" onclick="switchTab('achievements')">Досягнення</button>
+        </div>
+
+        <!-- Вкладка 1: Покращення кліку -->
+        <div id="tab-upgrades" class="tab-content active">
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🪵 Трембіта</h3>
+                    <p>+1 за клік | Ціна: <span id="c1-cost">15</span></p>
+                </div>
+                <button class="buy-btn" id="buyC1" onclick="buyClickUp()">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🪓 Гуцульська топірка</h3>
+                    <p>+5 за клік | Ціна: <span id="c2-cost">100</span></p>
+                </div>
+                <button class="buy-btn" id="buyC2" onclick="buyClickUp2()">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🎻 Скрипка гудака</h3>
+                    <p>+25 за клік | Ціна: <span id="c3-cost">550</span></p>
+                </div>
+                <button class="buy-btn" id="buyC3" onclick="buyClickUp3()">Купити</button>
+            </div>
+        </div>
+
+        <!-- Вкладка 2: Пасивний бізнес -->
+        <div id="tab-business" class="tab-content">
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>♨️ Мінеральний чан</h3>
+                    <p>+1/сек | <span id="b1-count">0</span> шт. | Ціна: <span id="b1-cost">50</span></p>
+                </div>
+                <button class="buy-btn" id="buyB1" onclick="buyBusiness(1)">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🧀 Полонина бринзи</h3>
+                    <p>+8/сек | <span id="b2-count">0</span> шт. | Ціна: <span id="b2-cost">300</span></p>
+                </div>
+                <button class="buy-btn" id="buyB2" onclick="buyBusiness(2)">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🍷 Винний льох</h3>
+                    <p>+35/сек | <span id="b3-count">0</span> шт. | Ціна: <span id="b3-cost">1400</span></p>
+                </div>
+                <button class="buy-btn" id="buyB3" onclick="buyBusiness(3)">Купити</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <h3>🏰 Замок Паланок</h3>
+                    <p>+150/сек | <span id="b4-count">0</span> шт. | Ціна: <span id="b4-cost">7000</span></p>
+                </div>
+                <button class="buy-btn" id="buyB4" onclick="buyBusiness(4)">Купити</button>
+            </div>
+        </div>
+
+        <!-- Вкладка 3: Досягнення -->
+        <div id="tab-achievements" class="tab-content">
+            <div class="upgrade-card" style="opacity: 0.6;" id="ach-1">
+                <div class="upgrade-info">
+                    <h3>🎯 Перший бограч</h3>
+                    <p>Зберіть 100 балів</p>
+                </div>
+            </div>
+            <div class="upgrade-card" style="opacity: 0.6;" id="ach-2">
+                <div class="upgrade-info">
+                    <h3>⛰️ Полонинський магнат</h3>
+                    <p>Досягніть 10 доходу за сек</p>
+                </div>
+            </div>
+            <div class="upgrade-card" style="opacity: 0.6;" id="ach-3">
+                <div class="upgrade-info">
+                    <h3>👑 Володар Закарпаття</h3>
+                    <p>Зберіть 10,000 балів</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let clickPower = 1;
+        let cps = 0;
+        let level = 1;
+        let eventMultiplier = 1;
+
+        // Покращення кліку
+        let c1Cost = 15, c2Cost = 100, c3Cost = 550;
+        
+        // Бізнес (Пасив)
+        let bus = [
+            { count: 0, cost: 50, cps: 1, costMult: 1.4 },
+            { count: 0, cost: 300, cps: 8, costMult: 1.45 },
+            { count: 0, cost: 1400, cps: 35, costMult: 1.5 },
+            { count: 0, cost: 7000, cps: 150, costMult: 1.55 }
+        ];
+
+        const scoreEl = document.getElementById('score');
+        const cpsEl = document.getElementById('cps');
+        const levelEl = document.getElementById('level-display');
+        const clickBtn = document.getElementById('clickBtn');
+
+        // Перемикання вкладок
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Клік по головній кнопці
+        clickBtn.addEventListener('click', (e) => {
+            let earned = clickPower * eventMultiplier;
+            score += earned;
+            checkAchievements();
+            updateUI();
+            
+            // Анімація цифр
+            const rect = clickBtn.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const floatText = document.createElement('div');
+            floatText.className = 'floating-score';
+            floatText.innerText = `+${earned}`;
+            floatText.style.left = `${x}px`;
+            floatText.style.top = `${y}px`;
+            clickBtn.appendChild(floatText);
+
+            setTimeout(() => floatText.remove(), 700);
+        });
+
+        // Покупка покращень кліку
+        function buyClickUp() {
+            if (score >= c1Cost) {
+                score -= c1Cost;
+                clickPower += 1;
+                c1Cost = Math.floor(c1Cost * 1.5);
+                document.getElementById('c1-cost').innerText = c1Cost;
+                updateUI();
+            }
+        }
+        function buyClickUp2() {
+            if (score >= c2Cost) {
+                score -= c2Cost;
+                clickPower += 5;
+                c2Cost = Math.floor(c2Cost * 1.55);
+                document.getElementById('c2-cost').innerText = c2Cost;
+                updateUI();
+            }
+        }
+        function buyClickUp3() {
+            if (score >= c3Cost) {
+                score -= c3Cost;
+                clickPower += 25;
+                c3Cost = Math.floor(c3Cost * 1.6);
+                document.getElementById('c3-cost').innerText = c3Cost;
+                updateUI();
+            }
+        }
+
+        // Покупка бізнесу
+        function buyBusiness(id) {
+            let index = id - 1;
+            let b = bus[index];
+            if (score >= b.cost) {
+                score -= b.cost;
+                b.count++;
+                cps += b.cps;
+                b.cost = Math.floor(b.cost * b.costMult);
+                
+                document.getElementById(`b${id}-count`).innerText = b.count;
+                document.getElementById(`b${id}-cost`).innerText = b.cost;
+                updateUI();
+            }
+        }
+
+        // Рівні гри залежно від балів
+        function updateLevel() {
+            if (score >= 10000) level = 4;
+            else if (score >= 2500) level = 3;
+            else if (score >= 500) level = 2;
+            else level = 1;
+            
+            let titles = ["1: Новачок", "2: Леґінь", "3: Смаколик", "4: Опришок"];
+            levelEl.innerText = `Рівень: ${titles[level-1]}`;
+        }
+
+        // Перевірка досягнень
+        function checkAchievements() {
+            if (score >= 100) document.getElementById('ach-1').style.opacity = '1';
+            if (cps >= 10) document.getElementById('ach-2').style.opacity = '1';
+            if (score >= 10000) document.getElementById('ach-3').style.opacity = '1';
+        }
+
+        // Випадкові події (Туристи приїхали)
+        setInterval(() => {
+            if (Math.random() < 0.2 && eventMultiplier === 1) {
+                eventMultiplier = 2;
+                let banner = document.getElementById('event-banner');
+                banner.style.display = 'block';
+                setTimeout(() => {
+                    eventMultiplier = 1;
+                    banner.style.display = 'none';
+                }, 10000);
+            }
+        }, 25000);
+
+        // Пасивний дохід щосекунди
+        setInterval(() => {
+            if (cps > 0) {
+                score += cps;
+                checkAchievements();
+                updateUI();
+            }
+        }, 1000);
+
+        function updateUI() {
+            scoreEl.innerText = Math.floor(score);
+            cpsEl.innerText = `Дохід/сек: ${cps * eventMultiplier}`;
+            updateLevel();
+
+            // Блокування кнопок
+            document.getElementById('buyC1').disabled = score < c1Cost;
+            document.getElementById('buyC2').disabled = score < c2Cost;
+            document.getElementById('buyC3').disabled = score < c3Cost;
+
+            for (let i = 0; i < bus.length; i++) {
+                let btn = document.getElementById(`buyB${i+1}`);
+                if (btn) btn.disabled = score < bus[i].cost;
+            }
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
