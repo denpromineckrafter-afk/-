@@ -56,14 +56,19 @@
             color: #a5d6a7;
         }
 
-        .music-toggle {
+        .top-buttons {
             position: absolute;
             top: 0;
             right: 0;
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-sm-btn {
             background: var(--card-bg);
             border: 1px solid #ffcc00;
             color: #ffcc00;
-            padding: 5px 8px;
+            padding: 5px 6px;
             border-radius: 8px;
             font-size: 10px;
             cursor: pointer;
@@ -75,7 +80,7 @@
             border-radius: 15px;
             padding: 12px;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             width: 100%;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             box-sizing: border-box;
@@ -98,10 +103,14 @@
             padding-top: 5px;
         }
 
-        /* Кнопка тепер не змінює розмір (scale видалено) */
+        .clicker-container {
+            position: relative;
+            margin: 5px 0 10px 0;
+        }
+
         .clicker-btn {
-            width: 150px;
-            height: 150px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             background: radial-gradient(circle, #7cb342, #33691e);
             border: 5px solid #fff8e1;
@@ -112,7 +121,6 @@
             align-items: center;
             justify-content: center;
             transition: box-shadow 0.1s;
-            margin: 5px 0 15px 0;
         }
 
         .clicker-btn:active {
@@ -120,15 +128,54 @@
         }
 
         .clicker-icon {
-            font-size: 50px;
+            font-size: 45px;
         }
 
         .clicker-text {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             color: #fff;
             margin-top: 2px;
             text-transform: uppercase;
+        }
+
+        /* Золота бульба (міні-подія) */
+        #golden-potato {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #ffeb3b, #f57f17);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ffeb3b;
+            animation: bounce 0.6s infinite alternate;
+            z-index: 10;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        #dialogue-box {
+            background: #152619;
+            border: 1px dashed #ffcc00;
+            color: #ffcc00;
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 10px;
+            min-height: 15px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .tabs {
@@ -147,7 +194,7 @@
             color: #a5d6a7;
             padding: 7px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             border-radius: 8px;
             transition: 0.2s;
@@ -161,7 +208,7 @@
         .tab-content {
             display: none;
             width: 100%;
-            max-height: 230px;
+            max-height: 210px;
             overflow-y: auto;
             padding-right: 2px;
         }
@@ -235,21 +282,26 @@
             border-radius: 8px;
             font-size: 11px;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: none;
+            width: 100%;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
 
-    <!-- Підключення фонової музики -->
+    <!-- Фонова музика -->
     <audio id="bgMusic" loop>
         <source src="music.mp3.mp3" type="audio/mp3">
     </audio>
 
     <div class="container">
         <header>
-            <button class="music-toggle" id="musicBtn" onclick="toggleMusic()">🎵 Музика: Викл</button>
+            <div class="top-buttons">
+                <button class="action-sm-btn" onclick="claimDaily()">🎁 Щодня</button>
+                <button class="action-sm-btn" id="musicBtn" onclick="toggleMusic()">🎵 Викл</button>
+            </div>
             <h1>🏡 Закарпатська Ферма</h1>
             <div class="subtitle">Вирощуй та збирай смаколик!</div>
         </header>
@@ -265,9 +317,14 @@
             </div>
         </div>
 
-        <div class="clicker-btn" id="clickBtn">
-            <span class="clicker-icon">🥔</span>
-            <span class="clicker-text">Збирати!</span>
+        <div id="dialogue-box">🗣️ "Добрий день, ґаздо! Займайтеся грядкою!"</div>
+
+        <div class="clicker-container">
+            <div id="golden-potato" onclick="catchGoldenPotato()" title="Золота бульба!">🌟</div>
+            <div class="clicker-btn" id="clickBtn">
+                <span class="clicker-icon">🥔</span>
+                <span class="clicker-text">Збирати!</span>
+            </div>
         </div>
 
         <div class="tabs">
@@ -359,6 +416,7 @@
         let cps = 0;
         let level = 1;
         let eventMultiplier = 1;
+        let lastDaily = 0;
 
         let c1Cost = 15, c2Cost = 100, c3Cost = 550;
         let bus = [
@@ -367,6 +425,19 @@
             { count: 0, cost: 1400, cps: 35, costMult: 1.5 },
             { count: 0, cost: 7000, cps: 150, costMult: 1.55 }
         ];
+
+        const quotes = [
+            "🗣️ 'Файно йде робота!'",
+            "🗣️ 'Овечки вже мекають від радості!'",
+            "🗣️ 'З такого врожаю буде знатний бограч!'",
+            "🗣️ 'Арідник завидує вашому господарству!'",
+            "🗣️ 'Тримайтеся гомінких полонин!'"
+        ];
+
+        function setRandomQuote() {
+            let q = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('dialogue-box').innerText = q;
+        }
 
         const scoreEl = document.getElementById('score');
         const cpsEl = document.getElementById('cps');
@@ -380,11 +451,11 @@
         function toggleMusic() {
             if (isMusicPlaying) {
                 bgMusic.pause();
-                musicBtn.innerText = "🎵 Музика: Викл";
+                musicBtn.innerText = "🎵 Викл";
                 isMusicPlaying = false;
             } else {
                 bgMusic.play().then(() => {
-                    musicBtn.innerText = "🎵 Музика: Вкл";
+                    musicBtn.innerText = "🎵 Вкл";
                     isMusicPlaying = true;
                 }).catch(e => console.log("Потрібна дія користувача"));
             }
@@ -424,6 +495,7 @@
                 clickPower += 1;
                 c1Cost = Math.floor(c1Cost * 1.5);
                 document.getElementById('c1-cost').innerText = c1Cost;
+                setRandomQuote();
                 updateUI();
             }
         }
@@ -433,6 +505,7 @@
                 clickPower += 5;
                 c2Cost = Math.floor(c2Cost * 1.55);
                 document.getElementById('c2-cost').innerText = c2Cost;
+                setRandomQuote();
                 updateUI();
             }
         }
@@ -442,6 +515,7 @@
                 clickPower += 25;
                 c3Cost = Math.floor(c3Cost * 1.6);
                 document.getElementById('c3-cost').innerText = c3Cost;
+                setRandomQuote();
                 updateUI();
             }
         }
@@ -457,8 +531,38 @@
                 
                 document.getElementById(`b${id}-count`).innerText = b.count;
                 document.getElementById(`b${id}-cost`).innerText = b.cost;
+                setRandomQuote();
                 updateUI();
             }
+        }
+
+        function claimDaily() {
+            let now = Date.now();
+            if (now - lastDaily > 24 * 60 * 60 * 1000) {
+                score += 200;
+                lastDaily = now;
+                document.getElementById('dialogue-box').innerText = "🎁 Ви отримали щоденний бонус: +200 врожаю!";
+                updateUI();
+            } else {
+                document.getElementById('dialogue-box').innerText = "⏳ Щоденний бонус можна брати раз на добу!";
+            }
+        }
+
+        // Логіка появи золотої бульби
+        setInterval(() => {
+            let gp = document.getElementById('golden-potato');
+            if (Math.random() < 0.3 && gp.style.display === 'none') {
+                gp.style.display = 'flex';
+                setTimeout(() => { gp.style.display = 'none'; }, 6000); // зникне через 6 секунд якщо не клікнути
+            }
+        }, 20000);
+
+        function catchGoldenPotato() {
+            let bonus = Math.max(50, cps * 15 + 100);
+            score += bonus;
+            document.getElementById('golden-potato').style.display = 'none';
+            document.getElementById('dialogue-box').innerText = `🌟 Ви спіймали золоту бульбу! +${bonus} врожаю!`;
+            updateUI();
         }
 
         function updateLevel() {
@@ -478,7 +582,7 @@
         }
 
         setInterval(() => {
-            if (Math.random() < 0.2 && eventMultiplier === 1) {
+            if (Math.random() < 0.15 && eventMultiplier === 1) {
                 eventMultiplier = 2;
                 let banner = document.getElementById('event-banner');
                 banner.style.display = 'block';
@@ -487,7 +591,7 @@
                     banner.style.display = 'none';
                 }, 10000);
             }
-        }, 25000);
+        }, 30000);
 
         setInterval(() => {
             if (cps > 0) {
