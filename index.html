@@ -98,6 +98,7 @@
             padding-top: 5px;
         }
 
+        /* Кнопка тепер не змінює розмір (scale видалено) */
         .clicker-btn {
             width: 150px;
             height: 150px;
@@ -110,13 +111,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: transform 0.08s, box-shadow 0.08s;
+            transition: box-shadow 0.1s;
             margin: 5px 0 15px 0;
         }
 
         .clicker-btn:active {
-            transform: scale(0.90);
-            box-shadow: 0 3px 10px rgba(51, 105, 30, 0.4);
+            box-shadow: 0 4px 12px rgba(51, 105, 30, 0.4);
         }
 
         .clicker-icon {
