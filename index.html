@@ -54,7 +54,7 @@
         #durability-bar { height: 100%; background: #00e676; width: 100%; transition: width 0.2s; }
 
         .tabs { display: flex; width: 100%; margin-bottom: 6px; background: rgba(21, 38, 25, 0.9); border-radius: 10px; padding: 2px; gap: 1px; flex-wrap: wrap; justify-content: center; }
-        .tab-btn { background: none; border: none; color: #a5d6a7; padding: 5px 5px; font-weight: bold; font-size: 7px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
+        .tab-btn { background: none; border: none; color: #a5d6a7; padding: 4px 4px; font-weight: bold; font-size: 7px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
         .tab-btn.active { background: #2e7d32; color: var(--accent); }
 
         .tab-content { display: none; width: 100%; max-height: 175px; overflow-y: auto; padding-right: 2px; box-sizing: border-box; }
@@ -68,10 +68,6 @@
         .buy-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
         .donate-buy-btn { background: #00e676; color: #121f15; }
 
-        .fair-game { text-align: center; padding: 4px; }
-        .fair-controls { display: flex; gap: 8px; justify-content: center; margin-top: 6px; }
-        .fair-btn { background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 10px; }
-
         .floating-score { position: absolute; font-weight: bold; color: var(--accent); font-size: 12px; animation: floatUp 0.8s ease-out forwards; pointer-events: none; z-index: 100; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-40px); } }
 
@@ -81,7 +77,9 @@
         #event-banner { background: #d32f2f; color: white; padding: 3px 6px; border-radius: 8px; font-size: 9px; text-align: center; margin-bottom: 6px; display: none; width: 100%; box-sizing: border-box; font-weight: bold; }
         .share-btn { width: 100%; background: #0088cc; color: white; border: none; padding: 7px; border-radius: 8px; font-weight: bold; font-size: 10px; cursor: pointer; margin-top: 4px; }
 
-        /* Стилі для секретного вікна пасхалки */
+        #mushroom-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px; }
+        .mushroom-cell { background: rgba(10,30,15,0.8); border: 1px solid #4caf50; border-radius: 6px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
+
         #easter-egg-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: var(--card-bg); border: 2px solid var(--accent); border-radius: 15px; padding: 15px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(255,204,0,0.4); }
         .modal-content h3 { color: var(--accent); margin-top: 0; font-size: 14px; }
@@ -93,7 +91,6 @@
     <div class="container">
         <header>
             <div class="top-buttons">
-                <!-- Пасхалка активується швидким кліком по цій кнопці -->
                 <button class="action-sm-btn" onclick="handleDailyClick()">🎁 День</button>
             </div>
             <h1>🏡 Закарпатська Хардкор-Ферма</h1>
@@ -133,7 +130,8 @@
             <button class="tab-btn active" onclick="switchTab('upgrades', event)">Інструменти</button>
             <button class="tab-btn" onclick="switchTab('business', event)">Ферма</button>
             <button class="tab-btn" onclick="switchTab('shop', event)">🛍️ Скіни</button>
-            <button class="tab-btn" onclick="switchTab('managers', event)">🧙‍♂️ Ґазди</button>
+            <button class="tab-btn" onclick="switchTab('mushrooms', event)">🍄 Гриби</button>
+            <button class="tab-btn" onclick="switchTab('battlepass', event)">🛡️ БП</button>
             <button class="tab-btn" onclick="switchTab('fair', event)">Ярмарок</button>
             <button class="tab-btn" onclick="switchTab('settings', event)">⚙️ Наст.</button>
         </div>
@@ -154,16 +152,28 @@
             <div id="skins-list"></div>
         </div>
 
-        <div id="tab-managers" class="tab-content">
-            <div id="managers-list"></div>
+        <div id="tab-mushrooms" class="tab-content">
+            <div style="text-align: center; font-size: 9px; color: #dcedc8;">Знайдіть білі гриби у лісі за 10 секунд!</div>
+            <div style="margin-top: 4px; display: flex; justify-content: space-between; font-size: 9px; color: var(--accent);">
+                <span>Знайдено: <span id="m-found">0</span> / 3</span>
+                <span>Час: <span id="m-timer">10</span>с</span>
+            </div>
+            <div id="mushroom-grid"></div>
+            <button class="buy-btn" style="width: 100%; margin-top: 6px;" onclick="startMushroomGame()" id="m-start-btn">🌲 Піти в ліс по гриби</button>
+        </div>
+
+        <div id="tab-battlepass" class="tab-content">
+            <div style="font-size: 9px; color: var(--accent); text-align: center; margin-bottom: 4px;">🏆 Закарпатський Леґінь-Pass</div>
+            <div style="font-size: 8px; color: #dcedc8; text-align: center; margin-bottom: 6px;">Рівень батл-пасу: <b id="bp-level" style="color: var(--accent);">1</b> (Потрібно кліків: <span id="bp-progress">0</span>/200)</div>
+            <div id="battlepass-list"></div>
         </div>
 
         <div id="tab-fair" class="tab-content">
-            <div class="fair-game">
+            <div style="text-align: center; padding: 4px;">
                 <div style="font-size: 9px; color: #dcedc8;">Ярмарок (Ризик: ставка 15%)</div>
-                <div class="fair-controls">
-                    <button class="fair-btn" onclick="playFair('less')">📉 Менше 50</button>
-                    <button class="fair-btn" onclick="playFair('more')">📈 Більше 50</button>
+                <div style="display: flex; gap: 8px; justify-content: center; margin-top: 6px;">
+                    <button class="buy-btn" onclick="playFair('less')">📉 Менше 50</button>
+                    <button class="buy-btn" onclick="playFair('more')">📈 Більше 50</button>
                 </div>
                 <div id="game-result" style="font-size: 10px; margin-top: 5px; font-weight: bold;"></div>
                 <div style="font-size: 9px; color: #ffcc00; margin-top: 2px;">Випало: <span id="fair-number">?</span></div>
@@ -172,8 +182,12 @@
 
         <div id="tab-settings" class="tab-content">
             <div class="upgrade-card">
-                <div class="upgrade-info"><h3>🔊 Звуки</h3><p>Кліки та покупки</p></div>
+                <div class="upgrade-info"><h3>🔊 Звуки</h3><p>Кліки та події</p></div>
                 <button class="buy-btn" id="sound-toggle-btn" onclick="toggleSetting('sound')">Увімк.</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info"><h3>🎶 Фонова музика</h3><p>Закарпатська мелодія</p></div>
+                <button class="buy-btn" id="music-toggle-btn" onclick="toggleSetting('music')">Увімк.</button>
             </div>
             <div class="upgrade-card">
                 <div class="upgrade-info"><h3>📳 Вібрація</h3><p>Тактильний відгук</p></div>
@@ -187,11 +201,10 @@
         </div>
     </div>
 
-    <!-- Модальне вікно пасхалки -->
     <div id="easter-egg-modal">
         <div class="modal-content">
             <h3>🏔️ Нічний дзвін з полонини</h3>
-            <p id="easter-egg-text">Ви почули таємний дзвін трембіти у горах! Старий дід Василь розповідає легенду про те, як на цій землі виріс найбільший у світі кущ бульби.</p>
+            <p id="easter-egg-text">Ви почули таємний дзвін трембіти у горах!</p>
             <div style="margin-top: 10px; font-weight: bold; color: #00e676;" id="easter-egg-reward">+1500 врожаю у подарунок!</div>
             <button class="buy-btn" style="margin-top: 10px; width: 100%;" onclick="closeEasterEgg()">Дякую, ґаздо!</button>
         </div>
@@ -205,11 +218,10 @@
         let durability = 100, maxDurability = 100, isBroken = false;
         let activeSkin = "🥔";
 
-        // Змінні для відстеження пасхалки (швидкі кліки)
+        let bpLevel = 1, bpClicks = 0;
         let dailyClicksCount = 0;
         let dailyClickTimer = null;
-
-        let settings = { sound: true, haptic: true };
+        let settings = { sound: true, music: true, haptic: true };
 
         let upgrades = [
             { id: 1, name: "⛏️ Дерев'яна сапка", desc: "+1 за клік", cost: 25, power: 1, count: 0, mult: 1.7 },
@@ -231,101 +243,175 @@
             { id: 4, name: "👑 Корона Ґазди", icon: "👑", price: 120, owned: false, bonus: "+20 до кліку" }
         ];
 
-        let managers = [
-            { id: 1, name: "👩‍🌾 Пані Марія", desc: "Курятник (+12% CPS)", cost: 1500, hired: false, mult: 1.12 },
-            { id: 2, name: "👨‍🌾 Вівчар Іван", desc: "Овчарня (+18% CPS)", cost: 10000, hired: false, mult: 1.18 }
+        let battlePassTiers = [
+            { level: 1, rewardText: "+500 врожаю", rewardStars: 5, claimed: false },
+            { level: 2, rewardText: "Ексклюзивний скін 🪙", rewardStars: 10, claimed: false },
+            { level: 3, rewardText: "+2500 врожаю", rewardStars: 15, claimed: false },
+            { level: 4, rewardText: "Патент ґазди (+50 зірок)", rewardStars: 25, claimed: false },
+            { level: 5, rewardText: "Легендарна Корона 👑", rewardStars: 40, claimed: false }
         ];
 
+        // --- АУДІО ТА ФОНОВА МЕЛОДІЯ ---
         let audioCtx = null;
-        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        let musicInterval = null;
+        let melodyNotes = [220, 246.94, 277.18, 329.63, 369.99, 440, 493.88]; // Карпатський лад
+        let melodySequence = [0, 2, 4, 3, 5, 4, 2, 0, 1, 3, 4, 3, 2, 1];
+        let melodyStep = 0;
+
+        function initAudio() { 
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function startBackgroundMusic() {
+            if (musicInterval) return;
+            musicInterval = setInterval(() => {
+                if (!settings.music || !audioCtx) return;
+                try {
+                    let now = audioCtx.currentTime;
+                    let osc = audioCtx.createOscillator();
+                    let gainNode = audioCtx.createGain();
+                    
+                    osc.type = 'sine';
+                    let noteFreq = melodyNotes[melodySequence[melodyStep]];
+                    osc.frequency.setValueAtTime(noteFreq, now);
+                    
+                    gainNode.gain.setValueAtTime(0.015, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+                    
+                    osc.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    
+                    osc.start(now);
+                    osc.stop(now + 0.6);
+
+                    melodyStep = (melodyStep + 1) % melodySequence.length;
+                } catch(e) {}
+            }, 700);
+        }
+
+        function stopBackgroundMusic() {
+            if (musicInterval) {
+                clearInterval(musicInterval);
+                musicInterval = null;
+            }
+        }
 
         function playSound(type) {
             if (!settings.sound) return;
             try {
                 initAudio();
                 if (!audioCtx) return;
+                let now = audioCtx.currentTime;
                 let osc = audioCtx.createOscillator();
                 let gainNode = audioCtx.createGain();
                 osc.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
-                let now = audioCtx.currentTime;
+
                 if (type === 'click') {
                     osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(300, now);
-                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.05);
-                    gainNode.gain.setValueAtTime(0.1, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                    osc.start(now); osc.stop(now + 0.05);
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(70, now + 0.08);
+                    gainNode.gain.setValueAtTime(0.12, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                    osc.start(now); osc.stop(now + 0.08);
                 } else if (type === 'buy') {
                     osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc.frequency.setValueAtTime(783.99, now + 0.16);
+                    gainNode.gain.setValueAtTime(0.1, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                    osc.start(now); osc.stop(now + 0.3);
+                } else if (type === 'break') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.linearRampToValueAtTime(50, now + 0.25);
+                    gainNode.gain.setValueAtTime(0.18, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now); osc.stop(now + 0.25);
+                } else if (type === 'win') {
+                    osc.type = 'sine';
                     osc.frequency.setValueAtTime(400, now);
-                    osc.frequency.setValueAtTime(600, now + 0.08);
-                    gainNode.gain.setValueAtTime(0.15, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                    osc.start(now); osc.stop(now + 0.2);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+                    gainNode.gain.setValueAtTime(0.12, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now); osc.stop(now + 0.25);
                 }
             } catch(e) {}
         }
 
-        function triggerHaptic() {
+        function triggerHaptic(style = 'medium') {
             if (!settings.haptic) return;
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            if (tg && tg.HapticFeedback) {
+                try { tg.HapticFeedback.impactOccurred(style); } catch (e) {}
+            }
+        }
+
+        function triggerNotificationHaptic(type = 'success') {
+            if (!settings.haptic) return;
+            if (tg && tg.HapticFeedback) {
+                try { tg.HapticFeedback.notificationOccurred(type); } catch (e) {}
+            }
         }
 
         function toggleSetting(key) {
             settings[key] = !settings[key];
+            if (key === 'music') {
+                if (settings.music) {
+                    initAudio();
+                    startBackgroundMusic();
+                } else {
+                    stopBackgroundMusic();
+                }
+            }
             updateSettingsUI();
             saveGame();
         }
 
         function updateSettingsUI() {
             let sBtn = document.getElementById('sound-toggle-btn');
+            let mBtn = document.getElementById('music-toggle-btn');
             let hBtn = document.getElementById('haptic-toggle-btn');
             if (sBtn) { sBtn.innerText = settings.sound ? "Увімк." : "Вимк."; sBtn.style.background = settings.sound ? "var(--accent)" : "#555"; }
+            if (mBtn) { mBtn.innerText = settings.music ? "Увімк." : "Вимк."; mBtn.style.background = settings.music ? "var(--accent)" : "#555"; }
             if (hBtn) { hBtn.innerText = settings.haptic ? "Увімк." : "Вимк."; hBtn.style.background = settings.haptic ? "var(--accent)" : "#555"; }
         }
 
-        // Логіка щоденного бонусу та ПАСХАЛКИ
         function handleDailyClick() {
             dailyClicksCount++;
             if (dailyClickTimer) clearTimeout(dailyClickTimer);
-
-            // Якщо гравець зробив 5 швидких кліків по кнопці "День" — відкриваємо пасхалку!
             if (dailyClicksCount >= 5) {
                 dailyClicksCount = 0;
                 triggerEasterEgg();
                 return;
             }
-
             dailyClickTimer = setTimeout(() => {
                 dailyClicksCount = 0;
-                claimDaily(); // Звичайний щоденний бонус, якщо клікали повільно
+                claimDaily();
             }, 500);
         }
 
-        const easterEggStories = [
-            "Ви почули таємний дзвін трембіти у горах! Дід Василь шепоче: «Хто цінує закарпатські пісні, тому земля завжди дасть рясний урожай».",
-            "Ви знайшли старий схрон опришків! Там лежить зошит із текстами автентичних карпатських пісень і мішок золотавої бульби.",
-            "На полонині раптом зазвучала скрипка! Це музики грають до самого ранку, надихаючи вас на нові рекорди у клікері."
-        ];
-
         function triggerEasterEgg() {
-            triggerHaptic();
-            playSound('buy');
-            let randomStory = easterEggStories[Math.floor(Math.random() * easterEggStories.length)];
-            document.getElementById('easter-egg-text').innerText = randomStory;
+            triggerNotificationHaptic('success');
+            playSound('win');
+            document.getElementById('easter-egg-text').innerText = "Ви знайшли секретну колибу опришків у горах!";
             document.getElementById('easter-egg-modal').style.display = 'flex';
         }
 
         function closeEasterEgg() {
-            score += 1500; // Нагорода за знаходження пасхалки
+            score += 1500;
             updateUI();
             document.getElementById('easter-egg-modal').style.display = 'none';
         }
 
         function addTestStars() {
             starsBalance += 50;
-            triggerHaptic();
+            triggerNotificationHaptic('success');
             playSound('buy');
             updateUI();
             alert("🌟 Додано +50 зірок донату!");
@@ -337,7 +423,7 @@
                 starsBalance -= skin.price;
                 skin.owned = true;
                 equipSkin(skin.id);
-                triggerHaptic();
+                triggerNotificationHaptic('success');
                 playSound('buy');
                 renderShop();
                 updateUI();
@@ -353,6 +439,7 @@
                 document.getElementById('main-icon').innerText = activeSkin;
                 renderShop();
                 saveGame();
+                triggerHaptic('light');
             }
         }
 
@@ -384,11 +471,119 @@
             });
             document.getElementById('skins-list').innerHTML = skinsHtml;
 
-            let manHtml = "";
-            managers.forEach(m => {
-                manHtml += `<div class="upgrade-card"><div class="upgrade-info"><h3>${m.name}</h3><p>${m.desc} | ${m.cost}</p></div><button class="buy-btn" onclick="hireManager(${m.id})" id="man-${m.id}" ${m.hired ? 'disabled' : ''}>${m.hired ? 'Найнято' : 'Найняти'}</button></div>`;
+            renderBattlePass();
+        }
+
+        function renderBattlePass() {
+            document.getElementById('bp-level').innerText = bpLevel;
+            document.getElementById('bp-progress').innerText = bpClicks;
+
+            let bpHtml = "";
+            battlePassTiers.forEach((tier, index) => {
+                let isUnlocked = bpLevel >= tier.level;
+                let btnText = tier.claimed ? '✅ Забрано' : (isUnlocked ? '🎁 Забрати' : '🔒 Закрито');
+                let cardStyle = tier.claimed ? 'opacity: 0.6;' : '';
+
+                bpHtml += `<div class="upgrade-card" style="${cardStyle}">
+                    <div class="upgrade-info"><h3>Рівень ${tier.level}</h3><p>${tier.rewardText} (Ціна: ${tier.rewardStars} 🌟)</p></div>
+                    <button class="buy-btn donate-buy-btn" onclick="claimBattlePass(${index})" ${tier.claimed || !isUnlocked ? 'disabled' : ''}>${btnText}</button>
+                </div>`;
             });
-            document.getElementById('managers-list').innerHTML = manHtml;
+            document.getElementById('battlepass-list').innerHTML = bpHtml;
+        }
+
+        function claimBattlePass(index) {
+            let tier = battlePassTiers[index];
+            if (starsBalance >= tier.rewardStars && bpLevel >= tier.level && !tier.claimed) {
+                starsBalance -= tier.rewardStars;
+                tier.claimed = true;
+                if (index === 0) score += 500;
+                if (index === 1) { skins[1].owned = true; }
+                if (index === 2) score += 2500;
+                if (index === 3) starsBalance += 50;
+                if (index === 4) { skins[3].owned = true; }
+
+                triggerNotificationHaptic('success');
+                playSound('win');
+                renderShop();
+                updateUI();
+                alert(`🎉 Нагороду рівня ${tier.level} успішно отримано!`);
+            } else {
+                triggerNotificationHaptic('error');
+                alert("⚠️ Недостатньо зірок або рівень ще не досягнуто!");
+            }
+        }
+
+        let mushroomGameActive = false;
+        let mushroomsFound = 0;
+        let mushroomTimer = 10;
+        let mTimerInterval = null;
+
+        function startMushroomGame() {
+            mushroomGameActive = true;
+            mushroomsFound = 0;
+            mushroomTimer = 10;
+            document.getElementById('m-found').innerText = mushroomsFound;
+            document.getElementById('m-timer').innerText = mushroomTimer;
+            document.getElementById('m-start-btn').style.display = 'none';
+
+            let grid = document.getElementById('mushroom-grid');
+            grid.innerHTML = '';
+
+            let cells = [0,0,0,0,0,0,0,0,0,0,0,0];
+            let placed = 0;
+            while(placed < 3) {
+                let r = Math.floor(Math.random() * 12);
+                if (cells[r] === 0) { cells[r] = 1; placed++; }
+            }
+
+            cells.forEach((hasMushroom) => {
+                let cell = document.createElement('div');
+                cell.className = 'mushroom-cell';
+                cell.innerText = '🌿';
+                cell.onclick = () => {
+                    if (!mushroomGameActive) return;
+                    if (hasMushroom && cell.innerText === '🌿') {
+                        cell.innerText = '🍄';
+                        mushroomsFound++;
+                        document.getElementById('m-found').innerText = mushroomsFound;
+                        playSound('win');
+                        triggerHaptic('heavy');
+                        if (mushroomsFound >= 3) {
+                            endMushroomGame(true);
+                        }
+                    } else if (!hasMushroom && cell.innerText === '🌿') {
+                        cell.innerText = '🪨';
+                        playSound('click');
+                        triggerHaptic('light');
+                    }
+                };
+                grid.appendChild(cell);
+            });
+
+            mTimerInterval = setInterval(() => {
+                mushroomTimer--;
+                document.getElementById('m-timer').innerText = mushroomTimer;
+                if (mushroomTimer <= 0) {
+                    endMushroomGame(false);
+                }
+            }, 1000);
+        }
+
+        function endMushroomGame(won) {
+            mushroomGameActive = false;
+            clearInterval(mTimerInterval);
+            document.getElementById('m-start-btn').style.display = 'block';
+            if (won) {
+                let reward = 1200;
+                score += reward;
+                updateUI();
+                triggerNotificationHaptic('success');
+                alert(`🍄 Вітаю! Повний кошик грибів! +${reward} врожаю!`);
+            } else {
+                triggerNotificationHaptic('error');
+                alert("😢 Час вийшов! Гриби зібрали інші.");
+            }
         }
 
         function switchTab(tabName, evt) {
@@ -396,21 +591,31 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
             if (evt) evt.target.classList.add('active');
+            triggerHaptic('light');
         }
 
         document.getElementById('clickBtn').addEventListener('click', (e) => {
+            initAudio();
+            if (settings.music && !musicInterval) {
+                startBackgroundMusic();
+            }
+
             if (isBroken) {
-                alert("🛠️ Сапка зламалася! Треба залатати її врожаєм (купуючи апгрейд або дочекавшись авто-ремонту)!");
+                triggerNotificationHaptic('warning');
+                playSound('break');
+                alert("🛠️ Сапка зламалася! Залатайте її врожаєм!");
                 return;
             }
 
-            triggerHaptic();
+            triggerHaptic('medium');
             playSound('click');
 
             durability--;
             if (durability <= 0) {
                 isBroken = true;
                 durability = 0;
+                triggerNotificationHaptic('error');
+                playSound('break');
             }
             updateDurabilityUI();
 
@@ -419,6 +624,14 @@
             let earned = pPower * eventMultiplier * weatherMult * (1 + prestigePoints * 0.3);
             score += earned;
             totalClicks++;
+
+            bpClicks++;
+            if (bpClicks >= 200 * bpLevel && bpLevel < 5) {
+                bpLevel++;
+                bpClicks = 0;
+                triggerNotificationHaptic('success');
+                alert(`⭐ Батл-пас підвищено до рівня ${bpLevel}!`);
+            }
 
             updateUI();
             
@@ -449,10 +662,13 @@
                 u.cost *= u.mult;
                 if (isBroken) { isBroken = false; durability = maxDurability; }
                 else { durability = Math.min(maxDurability, durability + 25); }
-                triggerHaptic();
+                
+                triggerNotificationHaptic('success');
                 playSound('buy');
                 renderShop();
                 updateUI();
+            } else {
+                triggerNotificationHaptic('error');
             }
         }
 
@@ -463,36 +679,26 @@
                 b.count++;
                 b.cost *= b.mult;
                 calcCps();
-                triggerHaptic();
+                
+                triggerNotificationHaptic('success');
                 playSound('buy');
                 renderShop();
                 updateUI();
-            }
-        }
-
-        function hireManager(id) {
-            let m = managers.find(item => item.id === id);
-            if (!m.hired && score >= m.cost) {
-                score -= m.cost;
-                m.hired = true;
-                calcCps();
-                triggerHaptic();
-                playSound('buy');
-                renderShop();
-                updateUI();
+            } else {
+                triggerNotificationHaptic('error');
             }
         }
 
         function calcCps() {
             let baseCps = businesses.reduce((sum, b) => sum + (b.count * b.cps), 0);
-            let managerMult = managers.reduce((mSum, m) => m.hired ? mSum * m.mult : mSum, 1);
             let weatherCpsMult = (weatherType === 'hail') ? 0.3 : 1;
-            cps = Math.floor(baseCps * managerMult * weatherCpsMult);
+            cps = Math.floor(baseCps * weatherCpsMult);
         }
 
         function playFair(choice) {
             let bet = Math.floor(score * 0.15);
             if (bet < 20) {
+                triggerNotificationHaptic('error');
                 document.getElementById('game-result').innerText = "❌ Замало врожаю для ставки!";
                 return;
             }
@@ -503,9 +709,11 @@
             if (win) {
                 score += bet * 2.2;
                 document.getElementById('game-result').innerText = `🎉 Перемога! +${Math.floor(bet * 2.2)}`;
-                playSound('buy');
+                triggerNotificationHaptic('success');
+                playSound('win');
             } else {
                 document.getElementById('game-result').innerText = `😢 Програш ставки (${bet}).`;
+                triggerNotificationHaptic('error');
                 playSound('click');
             }
             updateUI();
@@ -553,14 +761,15 @@
             let reward = Math.max(80, cps * 12 + 150);
             score += reward;
             document.getElementById('bonus-drop').style.display = 'none';
-            triggerHaptic();
-            playSound('buy');
+            triggerNotificationHaptic('success');
+            playSound('win');
             alert(`💰 Опришківський скарб упіймано! +${Math.floor(reward)} врожаю.`);
             updateUI();
         }
 
         function resetGame() {
             if (score < 50000) {
+                triggerNotificationHaptic('warning');
                 alert("⚠️ Для закриття сезону у хардкор-режимі треба мінімум 50,000 врожаю!");
                 return;
             }
@@ -572,7 +781,8 @@
             businesses.forEach(b => { b.count = 0; });
             calcCps();
             saveGame();
-            alert("✨ Сезон закрито! Отримано Золоту Леґінь (+30% бонус до всіх майбутніх зборів)!");
+            triggerNotificationHaptic('success');
+            alert("✨ Сезон закрито! Отримано Золоту Леґінь (+30% бонус)!");
             location.reload();
         }
 
@@ -581,11 +791,15 @@
             if (now - lastDaily > 86400000) {
                 score += 800;
                 lastDaily = now;
+                triggerNotificationHaptic('success');
+                playSound('win');
                 alert("🎁 Щоденна допомога громади: +800 врожаю!");
-                playSound('buy');
                 saveGame();
                 updateUI();
-            } else { alert("⏳ Щоденний бонус доступний раз на добу!"); }
+            } else { 
+                triggerNotificationHaptic('warning');
+                alert("⏳ Щоденний бонус доступний раз на добу!"); 
+            }
         }
 
         function shareToChat() {
@@ -594,7 +808,7 @@
         }
 
         function saveGame() {
-            let data = { score, totalClicks, lastDaily, prestigePoints, starsBalance, durability, isBroken, activeSkin, settings, upgrades, businesses, managers, skins };
+            let data = { score, totalClicks, lastDaily, prestigePoints, starsBalance, durability, isBroken, activeSkin, bpLevel, bpClicks, battlePassTiers, settings, upgrades, businesses, skins };
             localStorage.setItem('zakarpatska_hardcore_save', JSON.stringify(data));
         }
 
@@ -610,10 +824,12 @@
                 durability = data.durability !== undefined ? data.durability : 100;
                 isBroken = data.isBroken || false;
                 activeSkin = data.activeSkin || "🥔";
+                bpLevel = data.bpLevel || 1;
+                bpClicks = data.bpClicks || 0;
+                if (data.battlePassTiers) battlePassTiers = data.battlePassTiers;
                 if (data.settings) settings = data.settings;
                 if (data.upgrades) upgrades = data.upgrades;
                 if (data.businesses) businesses = data.businesses;
-                if (data.managers) managers = data.managers;
                 if (data.skins) skins = data.skins;
                 document.getElementById('main-icon').innerText = activeSkin;
                 calcCps();
@@ -625,6 +841,8 @@
             document.getElementById('score').innerText = Math.floor(score);
             document.getElementById('cps').innerText = `Врожай/сек: ${cps * eventMultiplier}`;
             document.getElementById('donate-balance').innerText = `${starsBalance} 🌟`;
+            document.getElementById('bp-level').innerText = bpLevel;
+            document.getElementById('bp-progress').innerText = bpClicks;
 
             upgrades.forEach(u => {
                 let btn = document.getElementById(`up-${u.id}`);
@@ -633,10 +851,6 @@
             businesses.forEach(b => {
                 let btn = document.getElementById(`bus-${b.id}`);
                 if (btn) btn.disabled = score < b.cost;
-            });
-            managers.forEach(m => {
-                let btn = document.getElementById(`man-${m.id}`);
-                if (btn && !m.hired) btn.disabled = score < m.cost;
             });
         }
 
@@ -647,6 +861,14 @@
         updateSettingsUI();
         renderShop();
         updateUI();
+
+        if (settings.music) {
+            // Запуск музики після першого дотику/кліку гравця
+            window.addEventListener('click', () => {
+                initAudio();
+                startBackgroundMusic();
+            }, { once: true });
+        }
     </script>
 </body>
 </html>
