@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Закарпатська Мега-Ферма</title>
+    <!-- Підключення Telegram Web App API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-dark: #121f15;
@@ -15,7 +17,6 @@
         body {
             margin: 0;
             padding: 0;
-            /* Градієнт за замовчуванням, буде змінений JS */
             background: linear-gradient(to bottom, #051937, #004d7a, #008793, #00bf72, #a8eb12);
             background-size: 100% 400%;
             animation: timeOfDay 60s linear infinite;
@@ -40,23 +41,21 @@
         .bg-elements { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
         .cloud { position: absolute; background: rgba(255, 255, 255, 0.6); border-radius: 50px; animation: floatClouds linear infinite; }
         @keyframes floatClouds { from { left: -150px; } to { left: 100%; } }
-        .smoke { position: absolute; width: 10px; height: 10px; background: rgba(200, 200, 200, 0.4); border-radius: 50%; animation: riseSmoke 2s ease-out infinite; }
-        @keyframes riseSmoke { 0% { transform: translateY(0) scale(1); opacity: 0.5; } 100% { transform: translateY(-40px) scale(3); opacity: 0; } }
 
-        .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; background: rgba(0, 0, 0, 0.3); border-radius: 20px; margin-top: 20px; margin-bottom: 20px; }
-        header { text-align: center; margin-bottom: 10px; position: relative; width: 100%; }
-        h1 { font-size: 22px; margin: 0; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.7); }
-        .subtitle { font-size: 12px; color: #dcedc8; }
+        .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; background: rgba(0, 0, 0, 0.35); border-radius: 20px; margin-top: 15px; margin-bottom: 15px; backdrop-filter: blur(5px); }
+        header { text-align: center; margin-bottom: 8px; position: relative; width: 100%; }
+        h1 { font-size: 20px; margin: 0; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.7); }
+        .subtitle { font-size: 11px; color: #dcedc8; }
 
-        .top-buttons { position: absolute; top: 0; right: 0; display: flex; gap: 5px; }
-        .action-sm-btn { background: var(--card-bg); border: 1px solid var(--accent); color: var(--accent); padding: 4px 6px; border-radius: 8px; font-size: 9px; cursor: pointer; backdrop-filter: blur(5px); }
+        .top-buttons { position: absolute; top: 0; right: 0; display: flex; gap: 4px; }
+        .action-sm-btn { background: var(--card-bg); border: 1px solid var(--accent); color: var(--accent); padding: 4px 6px; border-radius: 8px; font-size: 9px; cursor: pointer; }
 
-        .status-panel { background: var(--card-bg); border: 2px solid var(--accent); border-radius: 15px; padding: 10px; text-align: center; margin-bottom: 10px; width: 100%; box-sizing: border-box; backdrop-filter: blur(5px); }
-        #score { font-size: 32px; font-weight: bold; color: var(--accent); margin: 2px 0; }
+        .status-panel { background: var(--card-bg); border: 2px solid var(--accent); border-radius: 15px; padding: 10px; text-align: center; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
+        #score { font-size: 30px; font-weight: bold; color: var(--accent); margin: 2px 0; }
         .stats-row { display: flex; justify-content: space-around; font-size: 11px; color: #dcedc8; margin-top: 5px; border-top: 1px solid #4caf50; padding-top: 5px; }
         #prestige-mult { color: #ff9800; font-weight: bold; }
 
-        #dialogue-box { background: rgba(21, 38, 25, 0.9); border: 1px dashed var(--accent); color: var(--accent); font-size: 11px; padding: 5px 10px; border-radius: 8px; text-align: center; margin-bottom: 10px; min-height: 14px; width: 100%; box-sizing: border-box; }
+        #dialogue-box { background: rgba(21, 38, 25, 0.9); border: 1px dashed var(--accent); color: var(--accent); font-size: 11px; padding: 5px 10px; border-radius: 8px; text-align: center; margin-bottom: 8px; min-height: 14px; width: 100%; box-sizing: border-box; }
 
         .clicker-container { position: relative; margin: 5px 0 10px 0; }
         .clicker-btn { width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, #8bc34a, #558b2f); border: 5px solid #fff8e1; box-shadow: 0 0 20px rgba(139, 195, 74, 0.7); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: box-shadow 0.1s; }
@@ -67,40 +66,40 @@
         #golden-potato { position: absolute; top: -10px; right: -10px; width: 45px; height: 45px; background: radial-gradient(circle, #fff176, #fbc02d); border: 2px solid #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; box-shadow: 0 0 15px #fff176; animation: bounce 0.5s infinite alternate; z-index: 10; }
         @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
 
-        .tabs { display: flex; width: 100%; margin-bottom: 10px; background: rgba(21, 38, 25, 0.9); border-radius: 10px; padding: 3px; }
-        .tab-btn { flex: 1; background: none; border: none; color: #a5d6a7; padding: 6px; font-weight: bold; font-size: 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+        .tabs { display: flex; width: 100%; margin-bottom: 8px; background: rgba(21, 38, 25, 0.9); border-radius: 10px; padding: 3px; }
+        .tab-btn { flex: 1; background: none; border: none; color: #a5d6a7; padding: 6px; font-weight: bold; font-size: 9px; cursor: pointer; border-radius: 8px; transition: 0.2s; }
         .tab-btn.active { background: #2e7d32; color: var(--accent); }
 
-        .tab-content { display: none; width: 100%; max-height: 220px; overflow-y: auto; padding-right: 2px; }
+        .tab-content { display: none; width: 100%; max-height: 200px; overflow-y: auto; padding-right: 2px; }
         .tab-content.active { display: block; }
 
-        .upgrade-card { background: var(--card-bg); border-radius: 10px; padding: 6px 10px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #4caf50; backdrop-filter: blur(5px); }
+        .upgrade-card { background: var(--card-bg); border-radius: 10px; padding: 6px 10px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #4caf50; }
         .upgrade-info h3 { margin: 0 0 1px 0; font-size: 11px; }
         .upgrade-info p { margin: 0; font-size: 9px; color: #dcedc8; }
         .buy-btn { background: var(--accent); color: var(--bg-dark); border: none; padding: 5px 8px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; transition: 0.2s; }
         .buy-btn:hover { background: #ffe082; }
         .buy-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
 
-        .fair-game { text-align: center; padding: 10px; }
-        .fair-controls { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
-        .fair-btn { background: #4caf50; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .fair-game { text-align: center; padding: 5px; }
+        .fair-controls { display: flex; gap: 10px; justify-content: center; margin-top: 8px; }
+        .fair-btn { background: #4caf50; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; }
         .fair-btn:hover { background: #81c784; }
-        #game-result { font-size: 14px; margin-top: 10px; min-height: 20px; font-weight: bold; }
 
         .floating-score { position: absolute; font-weight: bold; color: var(--accent); font-size: 14px; animation: floatUp 1s ease-out forwards; pointer-events: none; z-index: 100; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-50px); } }
 
         #event-banner { background: #d32f2f; color: white; padding: 3px 6px; border-radius: 8px; font-size: 10px; text-align: center; margin-bottom: 8px; display: none; width: 100%; box-sizing: border-box; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.5; } }
+
+        .share-btn { width: 100%; background: #0088cc; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; margin-top: 5px; }
     </style>
 </head>
 <body>
 
     <div class="bg-elements" id="bg-elements"></div>
 
-    <audio id="bgMusic" loop>
-        <source src="music.mp3.mp3" type="audio/mp3">
-    </audio>
+    <!-- Аудіо для музики та звуків -->
+    <audio id="bgMusic" loop><source src="music.mp3.mp3" type="audio/mp3"></audio>
 
     <div class="container">
         <header>
@@ -109,7 +108,7 @@
                 <button class="action-sm-btn" onclick="toggleMusic()">🎵 <span id="music-status">Викл</span></button>
             </div>
             <h1>🏡 Закарпатська Мега-Ферма</h1>
-            <div class="subtitle">Тепер зі збереженням!</div>
+            <div class="subtitle">Усе включено!</div>
         </header>
 
         <div id="event-banner">⚡ ПОГОЖИЙ ДЕНЬ! ПОДВІЙНИЙ ВРОЖАЙ! ⚡</div>
@@ -153,51 +152,271 @@
 
         <div id="tab-fair" class="tab-content">
             <div class="fair-game">
-                <div style="font-size: 11px; color: #dcedc8;">Зіграйте в "Більше-менше" на врожай. Ставка: 10% від поточного.</div>
+                <div style="font-size: 10px; color: #dcedc8;">Зіграйте в "Більше-менше" (Ставка: 10%)</div>
                 <div class="fair-controls">
                     <button class="fair-btn" onclick="playFair('less')">📉 Менше 50</button>
                     <button class="fair-btn" onclick="playFair('more')">📈 Більше 50</button>
                 </div>
-                <div id="game-result"></div>
-                <div style="font-size: 10px; color: #ffcc00; margin-top: 5px;">Число: <span id="fair-number">?</span></div>
+                <div id="game-result" style="font-size: 11px; margin-top: 6px; font-weight: bold;"></div>
+                <div style="font-size: 10px; color: #ffcc00; margin-top: 3px;">Випало: <span id="fair-number">?</span></div>
             </div>
         </div>
 
         <div id="tab-achievements" class="tab-content">
-            <div class="upgrade-card" id="prestige-card" style="background: #33691e;">
+            <div class="upgrade-card" style="background: #33691e; margin-bottom: 5px;">
                 <div class="upgrade-info">
                     <h3>✨ Закрити сезон (Престиж)</h3>
-                    <p>Обнулити все, отримати Золоту Леґінь (+20% до всього)</p>
+                    <p>Обнулити все, отримати Золоту Леґінь (+20% до врожаю)</p>
                 </div>
                 <button class="buy-btn" onclick="resetGame()">Закрити</button>
             </div>
-            <div class="upgrade-card" style="opacity: 0.6;" id="ach-1">
-                <div class="upgrade-info">
-                    <h3>🌱 Перша грядка</h3>
-                    <p>Зберіть 1,000 врожаю</p>
-                </div>
-            </div>
-            <div class="upgrade-card" style="opacity: 0.6;" id="ach-2">
-                <div class="upgrade-info">
-                    <h3>🧑‍🌾 Успішний ґазда</h3>
-                    <p>Досягніть 100 врожаю/сек</p>
-                </div>
-            </div>
+            <div id="achievements-list"></div>
+            <button class="share-btn" onclick="shareToChat()">📤 Похвалитися в чаті Telegram</button>
         </div>
     </div>
 
     <script>
-        // --- ЗМІННІ ГРИ ---
-        let score = 0;
-        let clickPower = 1;
-        let cps = 0;
-        let level = 1;
-        let eventMultiplier = 1;
-        let lastDaily = 0;
-        let prestigePoints = 0; // Золоті Леґіні
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-        // Базові ціни
-        let upgradesData = [
-            { id: 1, name: "⛏️ Дерев'яна сапка", baseCost: 15, power: 1, level: 0, costMult: 1.5 },
-            { id: 2, name: "🚜 Мотоблок", baseCost: 200, power: 10, level: 0, costMult: 1.55 },
-            { id: 3, name: "✨ Супер добриво", baseCost: 3000, power: 100, level: 0, costMult: 1.6
+        let score = 0, totalClicks = 0, cps = 0, eventMultiplier = 1, lastDaily = 0, prestigePoints = 0;
+
+        let upgrades = [
+            { id: 1, name: "⛏️ Дерев'яна сапка", desc: "+1 за клік", cost: 15, power: 1, count: 0, mult: 1.5 },
+            { id: 2, name: "🚜 Мотоблок", desc: "+10 за клік", cost: 200, power: 10, count: 0, mult: 1.55 },
+            { id: 3, name: "✨ Супер добриво", desc: "+100 за клік", cost: 3000, power: 100, count: 0, mult: 1.6 }
+        ];
+
+        let businesses = [
+            { id: 1, name: "🐔 Курятник", desc: "+2 врожаю/сек", cost: 50, cps: 2, count: 0, mult: 1.4 },
+            { id: 2, name: "🐑 Овчарня", desc: "+15 врожаю/сек", cost: 400, cps: 15, count: 0, mult: 1.45 },
+            { id: 3, name: "🧀 сироварня бринзи", desc: "+80 врожаю/сек", cost: 2500, cps: 80, count: 0, mult: 1.5 },
+            { id: 4, name: "🏡 Велика полонина", desc: "+400 врожаю/сек", cost: 15000, cps: 400, count: 0, mult: 1.55 }
+        ];
+
+        let achievements = [
+            { id: 1, title: "🌱 Перша грядка", req: 1000, reward: 200, done: false },
+            { id: 2, title: "🧑‍🌾 Досвідчений ґазда", req: 10000, reward: 2000, done: false },
+            { id: 3, title: "👑 Король полонини", req: 100000, reward: 20000, done: false }
+        ];
+
+        const quotes = [
+            "🗣️ 'Файно йде робота!'",
+            "🗣️ 'Овечки вже мекають від радості!'",
+            "🗣️ 'З такого врожаю буде знатний бограч!'"
+        ];
+
+        function triggerHaptic() {
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+        }
+
+        function playSound(type) {
+            // Аудіо-ефект (можна додати за бажанням)
+        }
+
+        function renderShop() {
+            let upHtml = "";
+            upgrades.forEach(u => {
+                upHtml += `<div class="upgrade-card"><div class="upgrade-info"><h3>${u.name} (${u.count})</h3><p>${u.desc} | Ціна: ${Math.floor(u.cost)}</p></div><button class="buy-btn" onclick="buyUpgrade(${u.id})" id="up-${u.id}">Купити</button></div>`;
+            });
+            document.getElementById('upgrades-list').innerHTML = upHtml;
+
+            let busHtml = "";
+            businesses.forEach(b => {
+                busHtml += `<div class="upgrade-card"><div class="upgrade-info"><h3>${b.name} (${b.count})</h3><p>${b.desc} | Ціна: ${Math.floor(b.cost)}</p></div><button class="buy-btn" onclick="buyBusiness(${b.id})" id="bus-${b.id}">Купити</button></div>`;
+            });
+            document.getElementById('business-list').innerHTML = busHtml;
+
+            let achHtml = "";
+            achievements.forEach(a => {
+                achHtml += `<div class="upgrade-card" style="opacity: ${a.done ? 1 : 0.6};"><div class="upgrade-info"><h3>${a.title}</h3><p>Ціль: ${a.req} врожаю | Нагорода: +${a.reward}</p></div><span>${a.done ? '✅' : '🔒'}</span></div>`;
+            });
+            document.getElementById('achievements-list').innerHTML = achHtml;
+        }
+
+        function switchTab(tabName, evt) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            if (evt) evt.target.classList.add('active');
+        }
+
+        document.getElementById('clickBtn').addEventListener('click', (e) => {
+            triggerHaptic();
+            let pPower = upgrades.reduce((sum, u) => sum + (u.count * u.power), 1);
+            let earned = pPower * eventMultiplier * (1 + prestigePoints * 0.2);
+            score += earned;
+            totalClicks++;
+
+            updateUI();
+            
+            const rect = e.target.getBoundingClientRect();
+            const floatText = document.createElement('div');
+            floatText.className = 'floating-score';
+            floatText.innerText = `+${Math.floor(earned)}`;
+            floatText.style.left = `${e.clientX - rect.left}px`;
+            floatText.style.top = `${e.clientY - rect.top}px`;
+            e.currentTarget.appendChild(floatText);
+            setTimeout(() => floatText.remove(), 800);
+        });
+
+        function buyUpgrade(id) {
+            let u = upgrades.find(item => item.id === id);
+            if (score >= u.cost) {
+                score -= u.cost;
+                u.count++;
+                u.cost *= u.mult;
+                triggerHaptic();
+                renderShop();
+                updateUI();
+            }
+        }
+
+        function buyBusiness(id) {
+            let b = businesses.find(item => item.id === id);
+            if (score >= b.cost) {
+                score -= b.cost;
+                b.count++;
+                b.cost *= b.mult;
+                calcCps();
+                triggerHaptic();
+                renderShop();
+                updateUI();
+            }
+        }
+
+        function calcCps() {
+            cps = businesses.reduce((sum, b) => sum + (b.count * b.cps), 0);
+        }
+
+        function playFair(choice) {
+            let bet = Math.floor(score * 0.1);
+            if (bet < 10) {
+                document.getElementById('game-result').innerText = "❌ Замало врожаю для ставки!";
+                return;
+            }
+            score -= bet;
+            let roll = Math.floor(Math.random() * 100) + 1;
+            document.getElementById('fair-number').innerText = roll;
+
+            let win = (choice === 'less' && roll < 50) || (choice === 'more' && roll > 50);
+            if (win) {
+                let reward = bet * 2;
+                score += reward;
+                document.getElementById('game-result').innerText = `🎉 Ви виграли +${reward} врожаю!`;
+                triggerHaptic();
+            } else {
+                document.getElementById('game-result').innerText = `😢 Ви програли ставку (${bet}).`;
+            }
+            updateUI();
+        }
+
+        function resetGame() {
+            if (score < 10000) {
+                alert("Треба мінімум 10,000 врожаю для закриття сезону!");
+                return;
+            }
+            prestigePoints++;
+            score = 0;
+            upgrades.forEach(u => { u.count = 0; u.cost = u.baseCost || u.cost; });
+            businesses.forEach(b => { b.count = 0; });
+            calcCps();
+            saveGame();
+            alert("✨ Сезон закрито! Отримано Золоту Леґінь!");
+            location.reload();
+        }
+
+        function claimDaily() {
+            let now = Date.now();
+            if (now - lastDaily > 86400000) {
+                score += 500;
+                lastDaily = now;
+                alert("🎁 Щоденний бонус отримано: +500 врожаю!");
+                saveGame();
+                updateUI();
+            } else {
+                alert("⏳ Щоденний бонус доступний раз на добу!");
+            }
+        }
+
+        function shareToChat() {
+            let text = `🏡 Моя Закарпатська Ферма процвітає! Зібрано врожаю: ${Math.floor(score)}. Приєднуйся до гри!`;
+            let url = `https://t.me/share/url?url=https://t.me/zakarpackykliker_bot&text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        // Збереження та Завантаження
+        function saveGame() {
+            let data = { score, totalClicks, lastDaily, prestigePoints, upgrades, businesses, achievements };
+            localStorage.setItem('zakarpatska_farm_save', JSON.stringify(data));
+        }
+
+        function loadGame() {
+            let saved = localStorage.getItem('zakarpatska_farm_save');
+            if (saved) {
+                let data = JSON.parse(saved);
+                score = data.score || 0;
+                totalClicks = data.totalClicks || 0;
+                lastDaily = data.lastDaily || 0;
+                prestigePoints = data.prestigePoints || 0;
+                if (data.upgrades) upgrades = data.upgrades;
+                if (data.businesses) businesses = data.businesses;
+                if (data.achievements) achievements = data.achievements;
+                calcCps();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('score').innerText = Math.floor(score);
+            document.getElementById('cps').innerText = `Врожай/сек: ${cps * eventMultiplier}`;
+            document.getElementById('prestige-mult').innerText = prestigePoints;
+
+            // Перевірка досягнень
+            achievements.forEach(a => {
+                if (!a.done && score >= a.req) {
+                    a.done = true;
+                    score += a.reward;
+                    alert(`🏆 Досягнення розблоковано: ${a.title}! Нагорода: +${a.reward}`);
+                    renderShop();
+                }
+            });
+
+            // Кнопки магазину
+            upgrades.forEach(u => {
+                let btn = document.getElementById(`up-${u.id}`);
+                if (btn) btn.disabled = score < u.cost;
+            });
+            businesses.forEach(b => {
+                let btn = document.getElementById(`bus-${b.id}`);
+                if (btn) btn.disabled = score < b.cost;
+            });
+        }
+
+        // Автозбереження кожні 3 секунди
+        setInterval(saveGame, 3000);
+
+        // Пасивний дохід
+        setInterval(() => {
+            if (cps > 0) {
+                score += cps * eventMultiplier;
+                updateUI();
+            }
+        }, 1000);
+
+        // Події
+        setInterval(() => {
+            if (Math.random() < 0.2 && eventMultiplier === 1) {
+                eventMultiplier = 2;
+                document.getElementById('event-banner').style.display = 'block';
+                setTimeout(() => { eventMultiplier = 1; document.getElementById('event-banner').style.display = 'none'; }, 10000);
+            }
+        }, 30000);
+
+        loadGame();
+        renderShop();
+        updateUI();
+    </script>
+</body>
+</html>
