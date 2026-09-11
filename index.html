@@ -50,7 +50,6 @@
         .clicker-icon { font-size: 34px; }
         .clicker-text { font-size: 10px; font-weight: bold; color: #fff; margin-top: 2px; text-transform: uppercase; }
 
-        /* Шкала витривалості сапки */
         .durability-box { width: 100%; background: rgba(0,0,0,0.5); border-radius: 6px; height: 6px; margin-bottom: 6px; overflow: hidden; border: 1px solid #4caf50; box-sizing: border-box; }
         #durability-bar { height: 100%; background: #00e676; width: 100%; transition: width 0.2s; }
 
@@ -81,6 +80,12 @@
 
         #event-banner { background: #d32f2f; color: white; padding: 3px 6px; border-radius: 8px; font-size: 9px; text-align: center; margin-bottom: 6px; display: none; width: 100%; box-sizing: border-box; font-weight: bold; }
         .share-btn { width: 100%; background: #0088cc; color: white; border: none; padding: 7px; border-radius: 8px; font-weight: bold; font-size: 10px; cursor: pointer; margin-top: 4px; }
+
+        /* Стилі для секретного вікна пасхалки */
+        #easter-egg-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--card-bg); border: 2px solid var(--accent); border-radius: 15px; padding: 15px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(255,204,0,0.4); }
+        .modal-content h3 { color: var(--accent); margin-top: 0; font-size: 14px; }
+        .modal-content p { font-size: 10px; color: #dcedc8; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -88,7 +93,8 @@
     <div class="container">
         <header>
             <div class="top-buttons">
-                <button class="action-sm-btn" onclick="claimDaily()">🎁 День</button>
+                <!-- Пасхалка активується швидким кліком по цій кнопці -->
+                <button class="action-sm-btn" onclick="handleDailyClick()">🎁 День</button>
             </div>
             <h1>🏡 Закарпатська Хардкор-Ферма</h1>
             <div class="subtitle">⚠️ Ускладнений режим виживання</div>
@@ -106,7 +112,6 @@
             </div>
         </div>
 
-        <!-- Шкала витривалості інструментів -->
         <div style="width: 100%; font-size: 8px; color: #dcedc8; display: flex; justify-content: space-between; margin-bottom: 2px;">
             <span>Витривалість сапки:</span>
             <span id="durability-text">100 / 100</span>
@@ -182,23 +187,30 @@
         </div>
     </div>
 
+    <!-- Модальне вікно пасхалки -->
+    <div id="easter-egg-modal">
+        <div class="modal-content">
+            <h3>🏔️ Нічний дзвін з полонини</h3>
+            <p id="easter-egg-text">Ви почули таємний дзвін трембіти у горах! Старий дід Василь розповідає легенду про те, як на цій землі виріс найбільший у світі кущ бульби.</p>
+            <div style="margin-top: 10px; font-weight: bold; color: #00e676;" id="easter-egg-reward">+1500 врожаю у подарунок!</div>
+            <button class="buy-btn" style="margin-top: 10px; width: 100%;" onclick="closeEasterEgg()">Дякую, ґаздо!</button>
+        </div>
+    </div>
+
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
         let score = 0, totalClicks = 0, cps = 0, eventMultiplier = 1, weatherType = 'normal', lastDaily = 0, prestigePoints = 0, starsBalance = 10;
         let durability = 100, maxDurability = 100, isBroken = false;
-        let currentThemeIndex = 0;
         let activeSkin = "🥔";
 
-        const themes = [
-            "linear-gradient(to bottom, #051937, #004d7a, #008793, #00bf72, #a8eb12)",
-            "linear-gradient(to bottom, #2c3e50, #3498db)"
-        ];
+        // Змінні для відстеження пасхалки (швидкі кліки)
+        let dailyClicksCount = 0;
+        let dailyClickTimer = null;
 
         let settings = { sound: true, haptic: true };
 
-        // Зроблено дорожчу і крутішу прогресію цін (mult значно вищий)
         let upgrades = [
             { id: 1, name: "⛏️ Дерев'яна сапка", desc: "+1 за клік", cost: 25, power: 1, count: 0, mult: 1.7 },
             { id: 2, name: "🚜 Мотоблок старих Карпат", desc: "+12 за клік", cost: 350, power: 12, count: 0, mult: 1.75 },
@@ -271,6 +283,44 @@
             let hBtn = document.getElementById('haptic-toggle-btn');
             if (sBtn) { sBtn.innerText = settings.sound ? "Увімк." : "Вимк."; sBtn.style.background = settings.sound ? "var(--accent)" : "#555"; }
             if (hBtn) { hBtn.innerText = settings.haptic ? "Увімк." : "Вимк."; hBtn.style.background = settings.haptic ? "var(--accent)" : "#555"; }
+        }
+
+        // Логіка щоденного бонусу та ПАСХАЛКИ
+        function handleDailyClick() {
+            dailyClicksCount++;
+            if (dailyClickTimer) clearTimeout(dailyClickTimer);
+
+            // Якщо гравець зробив 5 швидких кліків по кнопці "День" — відкриваємо пасхалку!
+            if (dailyClicksCount >= 5) {
+                dailyClicksCount = 0;
+                triggerEasterEgg();
+                return;
+            }
+
+            dailyClickTimer = setTimeout(() => {
+                dailyClicksCount = 0;
+                claimDaily(); // Звичайний щоденний бонус, якщо клікали повільно
+            }, 500);
+        }
+
+        const easterEggStories = [
+            "Ви почули таємний дзвін трембіти у горах! Дід Василь шепоче: «Хто цінує закарпатські пісні, тому земля завжди дасть рясний урожай».",
+            "Ви знайшли старий схрон опришків! Там лежить зошит із текстами автентичних карпатських пісень і мішок золотавої бульби.",
+            "На полонині раптом зазвучала скрипка! Це музики грають до самого ранку, надихаючи вас на нові рекорди у клікері."
+        ];
+
+        function triggerEasterEgg() {
+            triggerHaptic();
+            playSound('buy');
+            let randomStory = easterEggStories[Math.floor(Math.random() * easterEggStories.length)];
+            document.getElementById('easter-egg-text').innerText = randomStory;
+            document.getElementById('easter-egg-modal').style.display = 'flex';
+        }
+
+        function closeEasterEgg() {
+            score += 1500; // Нагорода за знаходження пасхалки
+            updateUI();
+            document.getElementById('easter-egg-modal').style.display = 'none';
         }
 
         function addTestStars() {
@@ -348,7 +398,6 @@
             if (evt) evt.target.classList.add('active');
         }
 
-        // Клікер з урахуванням зносу сапки
         document.getElementById('clickBtn').addEventListener('click', (e) => {
             if (isBroken) {
                 alert("🛠️ Сапка зламалася! Треба залатати її врожаєм (купуючи апгрейд або дочекавшись авто-ремонту)!");
@@ -358,7 +407,6 @@
             triggerHaptic();
             playSound('click');
 
-            // Знос витривалості
             durability--;
             if (durability <= 0) {
                 isBroken = true;
@@ -367,7 +415,7 @@
             updateDurabilityUI();
 
             let pPower = upgrades.reduce((sum, u) => sum + (u.count * u.power), 1) + getSkinBonus();
-            let weatherMult = (weatherType === 'drought') ? 0.5 : 1; // Засуха ріже клік вдвічі
+            let weatherMult = (weatherType === 'drought') ? 0.5 : 1;
             let earned = pPower * eventMultiplier * weatherMult * (1 + prestigePoints * 0.3);
             score += earned;
             totalClicks++;
@@ -399,7 +447,6 @@
                 score -= u.cost;
                 u.count++;
                 u.cost *= u.mult;
-                // Ремонт сапки при покупці апгрейду
                 if (isBroken) { isBroken = false; durability = maxDurability; }
                 else { durability = Math.min(maxDurability, durability + 25); }
                 triggerHaptic();
@@ -439,12 +486,12 @@
         function calcCps() {
             let baseCps = businesses.reduce((sum, b) => sum + (b.count * b.cps), 0);
             let managerMult = managers.reduce((mSum, m) => m.hired ? mSum * m.mult : mSum, 1);
-            let weatherCpsMult = (weatherType === 'hail') ? 0.3 : 1; // Град душить пасивний доход
+            let weatherCpsMult = (weatherType === 'hail') ? 0.3 : 1;
             cps = Math.floor(baseCps * managerMult * weatherCpsMult);
         }
 
         function playFair(choice) {
-            let bet = Math.floor(score * 0.15); // Ставка піднята до 15%
+            let bet = Math.floor(score * 0.15);
             if (bet < 20) {
                 document.getElementById('game-result').innerText = "❌ Замало врожаю для ставки!";
                 return;
@@ -454,7 +501,7 @@
             document.getElementById('fair-number').innerText = roll;
             let win = (choice === 'less' && roll < 50) || (choice === 'more' && roll > 50);
             if (win) {
-                score += bet * 2.2; // Нагорода трохи вища за ризик
+                score += bet * 2.2;
                 document.getElementById('game-result').innerText = `🎉 Перемога! +${Math.floor(bet * 2.2)}`;
                 playSound('buy');
             } else {
@@ -464,7 +511,6 @@
             updateUI();
         }
 
-        // Погода та непередбачувані події
         setInterval(() => {
             let rand = Math.random();
             let banner = document.getElementById('event-banner');
@@ -494,7 +540,6 @@
             calcCps();
         }, 20000);
 
-        // Поява випадкового скарбу
         setTimeout(() => {
             setInterval(() => {
                 if (Math.random() < 0.25) {
