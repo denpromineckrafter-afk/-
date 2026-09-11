@@ -18,7 +18,7 @@
             padding: 0;
             background: linear-gradient(to bottom, #051937, #004d7a, #008793, #00bf72, #a8eb12);
             background-size: 100% 400%;
-            animation: timeOfDay 60s linear infinite;
+            transition: background 1s ease;
             color: var(--text-main);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -29,70 +29,57 @@
             overflow-x: hidden;
         }
 
-        @keyframes timeOfDay {
-            0% { background-position: 0% 0%; }
-            25% { background-position: 0% 33%; }
-            50% { background-position: 0% 66%; }
-            75% { background-position: 0% 100%; }
-            100% { background-position: 0% 0%; }
-        }
-
-        .bg-elements { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
-
-        .container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; background: rgba(0, 0, 0, 0.35); border-radius: 20px; margin-top: 15px; margin-bottom: 15px; backdrop-filter: blur(5px); }
-        header { text-align: center; margin-bottom: 8px; position: relative; width: 100%; }
-        h1 { font-size: 20px; margin: 0; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.7); }
-        .subtitle { font-size: 11px; color: #dcedc8; }
+        .container { width: 100%; max-width: 420px; padding: 12px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; background: rgba(0, 0, 0, 0.4); border-radius: 20px; margin: 10px 0; backdrop-filter: blur(6px); }
+        header { text-align: center; margin-bottom: 6px; position: relative; width: 100%; }
+        h1 { font-size: 18px; margin: 0; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.7); }
+        .subtitle { font-size: 10px; color: #dcedc8; }
 
         .top-buttons { position: absolute; top: 0; right: 0; display: flex; gap: 4px; }
         .action-sm-btn { background: var(--card-bg); border: 1px solid var(--accent); color: var(--accent); padding: 4px 6px; border-radius: 8px; font-size: 9px; cursor: pointer; }
 
-        .status-panel { background: var(--card-bg); border: 2px solid var(--accent); border-radius: 15px; padding: 10px; text-align: center; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
-        #score { font-size: 30px; font-weight: bold; color: var(--accent); margin: 2px 0; }
-        .stats-row { display: flex; justify-content: space-around; font-size: 11px; color: #dcedc8; margin-top: 5px; border-top: 1px solid #4caf50; padding-top: 5px; }
-        #prestige-mult { color: #ff9800; font-weight: bold; }
+        .status-panel { background: var(--card-bg); border: 2px solid var(--accent); border-radius: 15px; padding: 8px; text-align: center; margin-bottom: 6px; width: 100%; box-sizing: border-box; }
+        #score { font-size: 26px; font-weight: bold; color: var(--accent); margin: 2px 0; }
+        .stats-row { display: flex; justify-content: space-around; font-size: 11px; color: #dcedc8; margin-top: 4px; border-top: 1px solid #4caf50; padding-top: 4px; }
+        #donate-balance { color: #00e676; font-weight: bold; }
 
-        #dialogue-box { background: rgba(21, 38, 25, 0.9); border: 1px dashed var(--accent); color: var(--accent); font-size: 11px; padding: 5px 10px; border-radius: 8px; text-align: center; margin-bottom: 8px; min-height: 14px; width: 100%; box-sizing: border-box; }
+        #dialogue-box { background: rgba(21, 38, 25, 0.9); border: 1px dashed var(--accent); color: var(--accent); font-size: 10px; padding: 4px 8px; border-radius: 8px; text-align: center; margin-bottom: 6px; min-height: 12px; width: 100%; box-sizing: border-box; }
 
-        .clicker-container { position: relative; margin: 5px 0 10px 0; }
-        .clicker-btn { width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, #8bc34a, #558b2f); border: 5px solid #fff8e1; box-shadow: 0 0 20px rgba(139, 195, 74, 0.7); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: box-shadow 0.1s; }
-        .clicker-btn:active { box-shadow: 0 0 10px rgba(139, 195, 74, 0.9); }
-        .clicker-icon { font-size: 40px; }
-        .clicker-text { font-size: 12px; font-weight: bold; color: #fff; margin-top: 2px; text-transform: uppercase; }
+        .clicker-container { position: relative; margin: 4px 0 8px 0; }
+        .clicker-btn { width: 110px; height: 110px; border-radius: 50%; background: radial-gradient(circle, #8bc34a, #558b2f); border: 4px solid #fff8e1; box-shadow: 0 0 15px rgba(139, 195, 74, 0.7); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.05s; }
+        .clicker-btn:active { transform: scale(0.93); }
+        .clicker-icon { font-size: 34px; }
+        .clicker-text { font-size: 10px; font-weight: bold; color: #fff; margin-top: 2px; text-transform: uppercase; }
 
-        .tabs { display: flex; width: 100%; margin-bottom: 8px; background: rgba(21, 38, 25, 0.9); border-radius: 10px; padding: 3px; flex-wrap: wrap; gap: 2px; }
-        .tab-btn { flex: 1; min-width: 22%; background: none; border: none; color: #a5d6a7; padding: 6px 2px; font-weight: bold; font-size: 9px; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+        .tabs { display: flex; width: 100%; margin-bottom: 6px; background: rgba(21, 38, 25, 0.9); border-radius: 10px; padding: 2px; gap: 1px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn { background: none; border: none; color: #a5d6a7; padding: 5px 6px; font-weight: bold; font-size: 8px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
         .tab-btn.active { background: #2e7d32; color: var(--accent); }
 
-        .tab-content { display: none; width: 100%; max-height: 200px; overflow-y: auto; padding-right: 2px; }
+        .tab-content { display: none; width: 100%; max-height: 180px; overflow-y: auto; padding-right: 2px; box-sizing: border-box; }
         .tab-content.active { display: block; }
 
-        .upgrade-card { background: var(--card-bg); border-radius: 10px; padding: 6px 10px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #4caf50; }
-        .upgrade-info h3 { margin: 0 0 1px 0; font-size: 11px; }
-        .upgrade-info p { margin: 0; font-size: 9px; color: #dcedc8; }
-        .buy-btn { background: var(--accent); color: var(--bg-dark); border: none; padding: 5px 8px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; transition: 0.2s; }
+        .upgrade-card { background: var(--card-bg); border-radius: 10px; padding: 6px 8px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #4caf50; }
+        .upgrade-info h3 { margin: 0 0 1px 0; font-size: 10px; }
+        .upgrade-info p { margin: 0; font-size: 8px; color: #dcedc8; }
+        .buy-btn { background: var(--accent); color: var(--bg-dark); border: none; padding: 5px 8px; border-radius: 6px; font-weight: bold; font-size: 9px; cursor: pointer; transition: 0.2s; }
         .buy-btn:hover { background: #ffe082; }
         .buy-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
+        .donate-buy-btn { background: #00e676; color: #121f15; }
 
-        .fair-game { text-align: center; padding: 5px; }
-        .fair-controls { display: flex; gap: 10px; justify-content: center; margin-top: 8px; }
-        .fair-btn { background: #4caf50; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; }
-        .fair-btn:hover { background: #81c784; }
+        .fair-game { text-align: center; padding: 4px; }
+        .fair-controls { display: flex; gap: 8px; justify-content: center; margin-top: 6px; }
+        .fair-btn { background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 10px; }
 
-        .floating-score { position: absolute; font-weight: bold; color: var(--accent); font-size: 14px; animation: floatUp 1s ease-out forwards; pointer-events: none; z-index: 100; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-50px); } }
+        .floating-score { position: absolute; font-weight: bold; color: var(--accent); font-size: 12px; animation: floatUp 0.8s ease-out forwards; pointer-events: none; z-index: 100; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-40px); } }
 
-        #event-banner { background: #d32f2f; color: white; padding: 3px 6px; border-radius: 8px; font-size: 10px; text-align: center; margin-bottom: 8px; display: none; width: 100%; box-sizing: border-box; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        #bonus-drop { position: absolute; top: 25px; left: 10px; background: #ff9800; color: #121f15; padding: 4px 6px; border-radius: 8px; font-size: 9px; font-weight: bold; cursor: pointer; display: none; animation: bounce 0.5s infinite alternate; z-index: 50; border: 2px solid #fff; }
+        @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
 
-        .share-btn { width: 100%; background: #0088cc; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; margin-top: 5px; }
-        .danger-btn { background: #d32f2f; color: white; }
-        .danger-btn:hover { background: #ef5350; }
+        #event-banner { background: #d32f2f; color: white; padding: 3px 6px; border-radius: 8px; font-size: 9px; text-align: center; margin-bottom: 6px; display: none; width: 100%; box-sizing: border-box; }
+        .share-btn { width: 100%; background: #0088cc; color: white; border: none; padding: 7px; border-radius: 8px; font-weight: bold; font-size: 10px; cursor: pointer; margin-top: 4px; }
     </style>
 </head>
 <body>
-
-    <div class="bg-elements" id="bg-elements"></div>
 
     <div class="container">
         <header>
@@ -100,28 +87,26 @@
                 <button class="action-sm-btn" onclick="claimDaily()">🎁 День</button>
             </div>
             <h1>🏡 Закарпатська Мега-Ферма</h1>
-            <div class="subtitle">Меню налаштувань додано!</div>
+            <div class="subtitle">Версія з донатом та скінами!</div>
         </header>
 
         <div id="event-banner">⚡ ПОГОЖИЙ ДЕНЬ! ПОДВІЙНИЙ ВРОЖАЙ! ⚡</div>
+        <div id="bonus-drop" onclick="claimBonusDrop()">💰 Опришківський скарб!</div>
 
         <div class="status-panel">
-            <div style="font-size: 10px; color: #dcedc8;">Зібрано врожаю:</div>
+            <div style="font-size: 9px; color: #dcedc8;">Зібрано врожаю:</div>
             <div id="score">0</div>
             <div class="stats-row">
                 <span id="cps">Врожай/сек: 0</span>
-                <span id="level-display">Ґазда: 1</span>
-            </div>
-            <div class="stats-row" style="border: none; margin-top: 2px; padding-top: 2px;">
-                <span>Золоті Леґіні: <span id="prestige-mult">0</span></span>
+                <span>Зірки/Грн: <span id="donate-balance">0 🌟</span></span>
             </div>
         </div>
 
-        <div id="dialogue-box">🗣️ "Ну що, ґаздо, до роботи?"</div>
+        <div id="dialogue-box">🗣️ "Слава Україні! Час розвивати господарство."</div>
 
         <div class="clicker-container">
             <div class="clicker-btn" id="clickBtn">
-                <span class="clicker-icon">🥔</span>
+                <span class="clicker-icon" id="main-icon">🥔</span>
                 <span class="clicker-text">Збирати!</span>
             </div>
         </div>
@@ -129,8 +114,10 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('upgrades', event)">Інструменти</button>
             <button class="tab-btn" onclick="switchTab('business', event)">Ферма</button>
-            <button class="tab-btn" onclick="switchTab('fair', event)">Ярмарок🎰</button>
-            <button class="tab-btn" onclick="switchTab('achievements', event)">Нагороди</button>
+            <button class="tab-btn" onclick="switchTab('shop', event)">🛍️ Скіни</button>
+            <button class="tab-btn" onclick="switchTab('managers', event)">🧙‍♂️ Ґазди</button>
+            <button class="tab-btn" onclick="switchTab('quests', event)">📜 Квести</button>
+            <button class="tab-btn" onclick="switchTab('fair', event)">Ярмарок</button>
             <button class="tab-btn" onclick="switchTab('settings', event)">⚙️ Наст.</button>
         </div>
 
@@ -142,53 +129,56 @@
             <div id="business-list"></div>
         </div>
 
+        <!-- Вкладка Магазин скінів та донату -->
+        <div id="tab-shop" class="tab-content">
+            <div class="upgrade-card" style="background: rgba(0, 230, 118, 0.2); border-color: #00e676;">
+                <div class="upgrade-info">
+                    <h3>⭐ Поповнити зірки (Тест)</h3>
+                    <p>Отримати +50 зірок для купівлі скінів</p>
+                </div>
+                <button class="buy-btn donate-buy-btn" onclick="addTestStars()">+50 🌟</button>
+            </div>
+            <div id="skins-list"></div>
+        </div>
+
+        <div id="tab-managers" class="tab-content">
+            <div id="managers-list"></div>
+        </div>
+
+        <div id="tab-quests" class="tab-content">
+            <div id="quests-list"></div>
+        </div>
+
         <div id="tab-fair" class="tab-content">
             <div class="fair-game">
-                <div style="font-size: 10px; color: #dcedc8;">Зіграйте в "Більше-менше" (Ставка: 10%)</div>
+                <div style="font-size: 9px; color: #dcedc8;">Ярмарок "Більше-менше" (Ставка: 10%)</div>
                 <div class="fair-controls">
                     <button class="fair-btn" onclick="playFair('less')">📉 Менше 50</button>
                     <button class="fair-btn" onclick="playFair('more')">📈 Більше 50</button>
                 </div>
-                <div id="game-result" style="font-size: 11px; margin-top: 6px; font-weight: bold;"></div>
-                <div style="font-size: 10px; color: #ffcc00; margin-top: 3px;">Випало: <span id="fair-number">?</span></div>
+                <div id="game-result" style="font-size: 10px; margin-top: 5px; font-weight: bold;"></div>
+                <div style="font-size: 9px; color: #ffcc00; margin-top: 2px;">Випало: <span id="fair-number">?</span></div>
             </div>
         </div>
 
-        <div id="tab-achievements" class="tab-content">
-            <div class="upgrade-card" style="background: #33691e; margin-bottom: 5px;">
-                <div class="upgrade-info">
-                    <h3>✨ Закрити сезон (Престиж)</h3>
-                    <p>Обнулити все, отримати Золоту Леґінь (+20% до врожаю)</p>
-                </div>
-                <button class="buy-btn" onclick="resetGame()">Закрити</button>
-            </div>
-            <div id="achievements-list"></div>
-            <button class="share-btn" onclick="shareToChat()">📤 Похвалитися в чаті Telegram</button>
-        </div>
-
-        <!-- Вкладка Налаштування -->
         <div id="tab-settings" class="tab-content">
             <div class="upgrade-card">
-                <div class="upgrade-info">
-                    <h3>🔊 Звукові ефекти</h3>
-                    <p>Увімкнути/вимкнути звуки кліків і покупок</p>
-                </div>
+                <div class="upgrade-info"><h3>🔊 Звуки</h3><p>Кліки та покупки</p></div>
                 <button class="buy-btn" id="sound-toggle-btn" onclick="toggleSetting('sound')">Увімк.</button>
             </div>
             <div class="upgrade-card">
-                <div class="upgrade-info">
-                    <h3>📳 Вібрація (Haptic)</h3>
-                    <p>Тактильний відгук при натисканні</p>
-                </div>
+                <div class="upgrade-info"><h3>📳 Вібрація</h3><p>Тактильний відгук</p></div>
                 <button class="buy-btn" id="haptic-toggle-btn" onclick="toggleSetting('haptic')">Увімк.</button>
             </div>
-            <div class="upgrade-card" style="border-color: #d32f2f;">
-                <div class="upgrade-info">
-                    <h3>🗑️ Повне скидання гри</h3>
-                    <p>Видалити весь прогрес і почати з нуля</p>
-                </div>
-                <button class="buy-btn danger-btn" onclick="hardReset()">Скинути</button>
+            <div class="upgrade-card">
+                <div class="upgrade-info"><h3>🌅 Змінити фон</h3><p>Час доби полонини</p></div>
+                <button class="buy-btn" onclick="cycleTheme()">Змінити</button>
             </div>
+            <div class="upgrade-card" style="background: #33691e;">
+                <div class="upgrade-info"><h3>✨ Престиж</h3><p>+20% врожаю за леґіня</p></div>
+                <button class="buy-btn" onclick="resetGame()">Закрити</button>
+            </div>
+            <button class="share-btn" onclick="shareToChat()">📤 Похвалитися в чаті</button>
         </div>
     </div>
 
@@ -196,13 +186,17 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        let score = 0, totalClicks = 0, cps = 0, eventMultiplier = 1, lastDaily = 0, prestigePoints = 0;
-        
-        // Налаштування
-        let settings = {
-            sound: true,
-            haptic: true
-        };
+        let score = 0, totalClicks = 0, cps = 0, eventMultiplier = 1, lastDaily = 0, prestigePoints = 0, starsBalance = 10;
+        let currentThemeIndex = 0;
+        let activeSkin = "🥔";
+
+        const themes = [
+            "linear-gradient(to bottom, #051937, #004d7a, #008793, #00bf72, #a8eb12)",
+            "linear-gradient(to bottom, #2c3e50, #3498db)",
+            "linear-gradient(to bottom, #4a154b, #2b0930, #120315)"
+        ];
+
+        let settings = { sound: true, haptic: true };
 
         let upgrades = [
             { id: 1, name: "⛏️ Дерев'яна сапка", desc: "+1 за клік", cost: 15, power: 1, count: 0, mult: 1.5 },
@@ -213,84 +207,121 @@
         let businesses = [
             { id: 1, name: "🐔 Курятник", desc: "+2 врожаю/сек", cost: 50, cps: 2, count: 0, mult: 1.4 },
             { id: 2, name: "🐑 Овчарня", desc: "+15 врожаю/сек", cost: 400, cps: 15, count: 0, mult: 1.45 },
-            { id: 3, name: "🧀 сироварня бринзи", desc: "+80 врожаю/сек", cost: 2500, cps: 80, count: 0, mult: 1.5 },
+            { id: 3, name: "🧀 Сироварня бринзи", desc: "+80 врожаю/сек", cost: 2500, cps: 80, count: 0, mult: 1.5 },
             { id: 4, name: "🏡 Велика полонина", desc: "+400 врожаю/сек", cost: 15000, cps: 400, count: 0, mult: 1.55 }
         ];
 
-        let achievements = [
-            { id: 1, title: "🌱 Перша грядка", req: 1000, reward: 200, done: false },
-            { id: 2, title: "🧑‍🌾 Досвідчений ґазда", req: 10000, reward: 2000, done: false },
-            { id: 3, title: "👑 Король полонини", req: 100000, reward: 20000, done: false }
+        // Скіни за донат-зірки
+        let skins = [
+            { id: 1, name: "🥔 Картопляна класика", icon: "🥔", price: 0, owned: true, bonus: "Стандартний вигляд" },
+            { id: 2, name: "🟡 Золота бульба", icon: "🪙", price: 20, owned: false, bonus: "+2 до сили кліку" },
+            { id: 3, name: "🧀 Карпатський сир", icon: "🧀", price: 50, owned: false, bonus: "+5 до сили кліку" },
+            { id: 4, name: "👑 Корона Ґазди", icon: "👑", price: 100, owned: false, bonus: "+15 до сили кліку" }
+        ];
+
+        let managers = [
+            { id: 1, name: "👩‍🌾 Пані Марія", desc: "Автоматизує курятник (+10% CPS)", cost: 1000, hired: false, mult: 1.1 },
+            { id: 2, name: "👨‍🌾 Вівчар Іван", desc: "Доглядає овчарню (+15% CPS)", cost: 7500, hired: false, mult: 1.15 }
+        ];
+
+        let quests = [
+            { id: 1, title: "🌱 Перша грядка", desc: "50 кліків", target: 50, current: 0, reward: 300, type: "clicks", completed: false },
+            { id: 2, title: "🧑‍🌾 Досвідчений ґазда", desc: "5,000 врожаю", target: 5000, current: 0, reward: 1500, type: "score", completed: false }
         ];
 
         let audioCtx = null;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-        }
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
         function playSound(type) {
-            if (!settings.sound) return; // Перевірка налаштувань звуку
+            if (!settings.sound) return;
             try {
                 initAudio();
                 if (!audioCtx) return;
-
                 let osc = audioCtx.createOscillator();
                 let gainNode = audioCtx.createGain();
                 osc.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
-
                 let now = audioCtx.currentTime;
-
                 if (type === 'click') {
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(300, now);
                     osc.frequency.exponentialRampToValueAtTime(100, now + 0.05);
                     gainNode.gain.setValueAtTime(0.1, now);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                    osc.start(now);
-                    osc.stop(now + 0.05);
+                    osc.start(now); osc.stop(now + 0.05);
                 } else if (type === 'buy') {
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(400, now);
                     osc.frequency.setValueAtTime(600, now + 0.08);
                     gainNode.gain.setValueAtTime(0.15, now);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                    osc.start(now);
-                    osc.stop(now + 0.2);
+                    osc.start(now); osc.stop(now + 0.2);
                 }
-            } catch (e) {
-                console.log("Звук не спрацював");
-            }
+            } catch(e) {}
         }
 
         function triggerHaptic() {
-            if (!settings.haptic) return; // Перевірка налаштувань вібрації
-            if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
-            }
+            if (!settings.haptic) return;
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
-        function toggleSetting(settingKey) {
-            settings[settingKey] = !settings[settingKey];
+        function toggleSetting(key) {
+            settings[key] = !settings[key];
             updateSettingsUI();
             saveGame();
         }
 
         function updateSettingsUI() {
-            let soundBtn = document.getElementById('sound-toggle-btn');
-            let hapticBtn = document.getElementById('haptic-toggle-btn');
-            
-            if (soundBtn) {
-                soundBtn.innerText = settings.sound ? "Увімк." : "Вимк.";
-                soundBtn.style.background = settings.sound ? "var(--accent)" : "#555";
+            let sBtn = document.getElementById('sound-toggle-btn');
+            let hBtn = document.getElementById('haptic-toggle-btn');
+            if (sBtn) { sBtn.innerText = settings.sound ? "Увімк." : "Вимк."; sBtn.style.background = settings.sound ? "var(--accent)" : "#555"; }
+            if (hBtn) { hBtn.innerText = settings.haptic ? "Увімк." : "Вимк."; hBtn.style.background = settings.haptic ? "var(--accent)" : "#555"; }
+        }
+
+        function cycleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            document.body.style.background = themes[currentThemeIndex];
+            saveGame();
+        }
+
+        function addTestStars() {
+            starsBalance += 50;
+            triggerHaptic();
+            playSound('buy');
+            updateUI();
+            alert("🌟 Отримано +50 тестових зірок донату!");
+        }
+
+        function buySkin(id) {
+            let skin = skins.find(s => s.id === id);
+            if (!skin.owned && starsBalance >= skin.price) {
+                starsBalance -= skin.price;
+                skin.owned = true;
+                equipSkin(skin.id);
+                triggerHaptic();
+                playSound('buy');
+                renderShop();
+                updateUI();
+            } else if (skin.owned) {
+                equipSkin(skin.id);
             }
-            if (hapticBtn) {
-                hapticBtn.innerText = settings.haptic ? "Увімк." : "Вимк.";
-                hapticBtn.style.background = settings.haptic ? "var(--accent)" : "#555";
+        }
+
+        function equipSkin(id) {
+            let skin = skins.find(s => s.id === id);
+            if (skin && skin.owned) {
+                activeSkin = skin.icon;
+                document.getElementById('main-icon').innerText = activeSkin;
+                renderShop();
+                saveGame();
             }
+        }
+
+        function getSkinBonus() {
+            if (activeSkin === '🪙') return 2;
+            if (activeSkin === '🧀') return 5;
+            if (activeSkin === '👑') return 15;
+            return 0;
         }
 
         function renderShop() {
@@ -306,11 +337,25 @@
             });
             document.getElementById('business-list').innerHTML = busHtml;
 
-            let achHtml = "";
-            achievements.forEach(a => {
-                achHtml += `<div class="upgrade-card" style="opacity: ${a.done ? 1 : 0.6};"><div class="upgrade-info"><h3>${a.title}</h3><p>Ціль: ${a.req} врожаю | Нагорода: +${a.reward}</p></div><span>${a.done ? '✅' : '🔒'}</span></div>`;
+            let skinsHtml = "";
+            skins.forEach(s => {
+                let isEquipped = s.icon === activeSkin;
+                let btnText = s.owned ? (isEquipped ? '✅ Надіто' : 'Одягнути') : `Купити (${s.price} 🌟)`;
+                skinsHtml += `<div class="upgrade-card"><div class="upgrade-info"><h3>${s.icon} ${s.name}</h3><p>${s.bonus}</p></div><button class="buy-btn ${!s.owned ? 'donate-buy-btn' : ''}" onclick="buySkin(${s.id})" ${isEquipped ? 'disabled' : ''}>${btnText}</button></div>`;
             });
-            document.getElementById('achievements-list').innerHTML = achHtml;
+            document.getElementById('skins-list').innerHTML = skinsHtml;
+
+            let manHtml = "";
+            managers.forEach(m => {
+                manHtml += `<div class="upgrade-card"><div class="upgrade-info"><h3>${m.name}</h3><p>${m.desc} | ${m.cost}</p></div><button class="buy-btn" onclick="hireManager(${m.id})" id="man-${m.id}" ${m.hired ? 'disabled' : ''}>${m.hired ? 'Найнято' : 'Найняти'}</button></div>`;
+            });
+            document.getElementById('managers-list').innerHTML = manHtml;
+
+            let qHtml = "";
+            quests.forEach(q => {
+                qHtml += `<div class="upgrade-card"><div class="upgrade-info"><h3>${q.title} (${q.current}/${q.target})</h3><p>${q.desc} | Нагорода: +${q.reward}</p></div><span>${q.completed ? '✅' : (q.current >= q.target ? '<button class="buy-btn" onclick="claimQuest('+q.id+')">Забрати</button>' : '⏳')}</span></div>`;
+            });
+            document.getElementById('quests-list').innerHTML = qHtml;
         }
 
         function switchTab(tabName, evt) {
@@ -323,10 +368,13 @@
         document.getElementById('clickBtn').addEventListener('click', (e) => {
             triggerHaptic();
             playSound('click');
-            let pPower = upgrades.reduce((sum, u) => sum + (u.count * u.power), 1);
+            let pPower = upgrades.reduce((sum, u) => sum + (u.count * u.power), 1) + getSkinBonus();
             let earned = pPower * eventMultiplier * (1 + prestigePoints * 0.2);
             score += earned;
             totalClicks++;
+
+            let qClicks = quests.find(q => q.type === 'clicks' && !q.completed);
+            if (qClicks) qClicks.current = totalClicks;
 
             updateUI();
             
@@ -367,54 +415,86 @@
             }
         }
 
+        function hireManager(id) {
+            let m = managers.find(item => item.id === id);
+            if (!m.hired && score >= m.cost) {
+                score -= m.cost;
+                m.hired = true;
+                calcCps();
+                triggerHaptic();
+                playSound('buy');
+                renderShop();
+                updateUI();
+            }
+        }
+
+        function claimQuest(id) {
+            let q = quests.find(item => item.id === id);
+            if (!q.completed && q.current >= q.target) {
+                q.completed = true;
+                score += q.reward;
+                triggerHaptic();
+                playSound('buy');
+                renderShop();
+                updateUI();
+            }
+        }
+
         function calcCps() {
-            cps = businesses.reduce((sum, b) => sum + (b.count * b.cps), 0);
+            let baseCps = businesses.reduce((sum, b) => sum + (b.count * b.cps), 0);
+            let managerMult = managers.reduce((mSum, m) => m.hired ? mSum * m.mult : mSum, 1);
+            cps = Math.floor(baseCps * managerMult);
         }
 
         function playFair(choice) {
             let bet = Math.floor(score * 0.1);
             if (bet < 10) {
-                document.getElementById('game-result').innerText = "❌ Замало врожаю для ставки!";
+                document.getElementById('game-result').innerText = "❌ Замало врожаю!";
                 return;
             }
             score -= bet;
             let roll = Math.floor(Math.random() * 100) + 1;
             document.getElementById('fair-number').innerText = roll;
-
             let win = (choice === 'less' && roll < 50) || (choice === 'more' && roll > 50);
             if (win) {
-                let reward = bet * 2;
-                score += reward;
-                document.getElementById('game-result').innerText = `🎉 Ви виграли +${reward} врожаю!`;
-                triggerHaptic();
+                score += bet * 2;
+                document.getElementById('game-result').innerText = `🎉 Виграш +${bet * 2}!`;
                 playSound('buy');
             } else {
-                document.getElementById('game-result').innerText = `😢 Ви програли ставку (${bet}).`;
+                document.getElementById('game-result').innerText = `😢 Програш.`;
                 playSound('click');
             }
             updateUI();
         }
 
+        setTimeout(() => {
+            setInterval(() => {
+                if (Math.random() < 0.3) {
+                    document.getElementById('bonus-drop').style.display = 'block';
+                    setTimeout(() => { document.getElementById('bonus-drop').style.display = 'none'; }, 7000);
+                }
+            }, 25000);
+        }, 5000);
+
+        function claimBonusDrop() {
+            let reward = Math.max(50, cps * 15 + 100);
+            score += reward;
+            document.getElementById('bonus-drop').style.display = 'none';
+            triggerHaptic();
+            playSound('buy');
+            alert(`💰 Скарб спіймано! +${Math.floor(reward)} врожаю.`);
+            updateUI();
+        }
+
         function resetGame() {
-            if (score < 10000) {
-                alert("Треба мінімум 10,000 врожаю для закриття сезону!");
-                return;
-            }
+            if (score < 10000) { alert("Треба мінімум 10,000 врожаю!"); return; }
             prestigePoints++;
             score = 0;
-            upgrades.forEach(u => { u.count = 0; u.cost = u.baseCost || u.cost; });
+            upgrades.forEach(u => { u.count = 0; });
             businesses.forEach(b => { b.count = 0; });
             calcCps();
             saveGame();
-            alert("✨ Сезон закрито! Отримано Золоту Леґінь!");
             location.reload();
-        }
-
-        function hardReset() {
-            if (confirm("Ви дійсно хочете повністю скинути весь прогрес і золоті леґіні?")) {
-                localStorage.removeItem('zakarpatska_farm_save');
-                location.reload();
-            }
         }
 
         function claimDaily() {
@@ -422,38 +502,42 @@
             if (now - lastDaily > 86400000) {
                 score += 500;
                 lastDaily = now;
-                alert("🎁 Щоденний бонус отримано: +500 врожаю!");
+                alert("🎁 Щоденний бонус: +500 врожаю!");
                 playSound('buy');
                 saveGame();
                 updateUI();
-            } else {
-                alert("⏳ Щоденний бонус доступний раз на добу!");
-            }
+            } else { alert("⏳ Доступно раз на добу!"); }
         }
 
         function shareToChat() {
-            let text = `🏡 Моя Закарпатська Ферма процвітає! Зібрано врожаю: ${Math.floor(score)}. Приєднуйся до гри!`;
-            let url = `https://t.me/share/url?url=https://t.me/zakarpackykliker_bot&text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
+            let text = `🏡 Моя Закарпатська Ферма процвітає! Зібрано врожаю: ${Math.floor(score)}.`;
+            window.open(`https://t.me/share/url?url=https://t.me/zakarpackykliker_bot&text=${encodeURIComponent(text)}`, '_blank');
         }
 
         function saveGame() {
-            let data = { score, totalClicks, lastDaily, prestigePoints, settings, upgrades, businesses, achievements };
-            localStorage.setItem('zakarpatska_farm_save', JSON.stringify(data));
+            let data = { score, totalClicks, lastDaily, prestigePoints, starsBalance, currentThemeIndex, activeSkin, settings, upgrades, businesses, managers, quests, skins };
+            localStorage.setItem('zakarpatska_farm_donate_save', JSON.stringify(data));
         }
 
         function loadGame() {
-            let saved = localStorage.getItem('zakarpatska_farm_save');
+            let saved = localStorage.getItem('zakarpatska_farm_donate_save');
             if (saved) {
                 let data = JSON.parse(saved);
                 score = data.score || 0;
                 totalClicks = data.totalClicks || 0;
                 lastDaily = data.lastDaily || 0;
                 prestigePoints = data.prestigePoints || 0;
+                starsBalance = data.starsBalance || 10;
+                currentThemeIndex = data.currentThemeIndex || 0;
+                activeSkin = data.activeSkin || "🥔";
                 if (data.settings) settings = data.settings;
                 if (data.upgrades) upgrades = data.upgrades;
                 if (data.businesses) businesses = data.businesses;
-                if (data.achievements) achievements = data.achievements;
+                if (data.managers) managers = data.managers;
+                if (data.quests) quests = data.quests;
+                if (data.skins) skins = data.skins;
+                document.body.style.background = themes[currentThemeIndex];
+                document.getElementById('main-icon').innerText = activeSkin;
                 calcCps();
             }
         }
@@ -461,17 +545,10 @@
         function updateUI() {
             document.getElementById('score').innerText = Math.floor(score);
             document.getElementById('cps').innerText = `Врожай/сек: ${cps * eventMultiplier}`;
-            document.getElementById('prestige-mult').innerText = prestigePoints;
+            document.getElementById('donate-balance').innerText = `${starsBalance} 🌟`;
 
-            achievements.forEach(a => {
-                if (!a.done && score >= a.req) {
-                    a.done = true;
-                    score += a.reward;
-                    alert(`🏆 Досягнення розблоковано: ${a.title}! Нагорода: +${a.reward}`);
-                    playSound('buy');
-                    renderShop();
-                }
-            });
+            let qScore = quests.find(q => q.type === 'score' && !q.completed);
+            if (qScore) qScore.current = Math.floor(score);
 
             upgrades.forEach(u => {
                 let btn = document.getElementById(`up-${u.id}`);
@@ -481,17 +558,14 @@
                 let btn = document.getElementById(`bus-${b.id}`);
                 if (btn) btn.disabled = score < b.cost;
             });
+            managers.forEach(m => {
+                let btn = document.getElementById(`man-${m.id}`);
+                if (btn && !m.hired) btn.disabled = score < m.cost;
+            });
         }
 
         setInterval(saveGame, 3000);
-
-        setInterval(() => {
-            if (cps > 0) {
-                score += cps * eventMultiplier;
-                updateUI();
-            }
-        }, 1000);
-
+        setInterval(() => { if (cps > 0) { score += cps * eventMultiplier; updateUI(); } }, 1000);
         setInterval(() => {
             if (Math.random() < 0.2 && eventMultiplier === 1) {
                 eventMultiplier = 2;
